@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>돈넣고 돈먹기 - 2026 북중미 월드컵 가상 예측 센터</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #060813;
+            color: #f3f4f6;
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        /* Ticket Scroll Bar Customization */
+        .ticket-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .ticket-scroll::-webkit-scrollbar-track {
+            background: #0b0f19;
+        }
+        .ticket-scroll::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 3px;
+        }
+        .ticket-scroll::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Global Connection Loading Backdrop -->
+    <div id="connection-loader" class="fixed inset-0 bg-[#060813] z-[100] flex flex-col items-center justify-center p-4">
+        <div class="relative flex flex-col items-center space-y-6">
+            <div class="w-16 h-16 border-4 border-t-red-600 border-r-blue-600 border-b-slate-800 border-l-slate-800 rounded-full animate-spin"></div>
+            <div class="text-center space-y-2">
+                <h3 class="text-lg font-black text-white tracking-widest uppercase">돈넣고 돈먹기</h3>
+                <p class="text-xs text-slate-400">보안 실시간 클라우드 데이터베이스 연결 중...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onboarding Login Overlap (Visible on Initial Run) -->
+    <div id="login-screen" class="fixed inset-0 bg-[#060813] z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-gradient-to-br from-slate-900 via-[#0b0f19] to-[#04060f] border border-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl relative overflow-hidden">
+            <div class="absolute -top-10 -left-10 w-40 h-40 bg-red-600/10 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-600/10 rounded-full blur-3xl"></div>
+            
+            <div class="relative z-10 text-center space-y-6">
+                <div class="inline-flex bg-gradient-to-r from-red-600 to-blue-600 p-3 rounded-2xl text-white font-black tracking-widest text-xs shadow-lg uppercase">
+                    FIFA 2026 PRE-MATCH
+                </div>
+                <div>
+                    <h2 class="text-2xl font-extrabold text-white tracking-tight">재미로 하는 배팅</h2>
+                </div>
+
+                <!-- Setup Form -->
+                <div class="text-left space-y-4">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">예측 분석관 닉네임</label>
+                        <input type="text" id="username-input" class="w-full bg-slate-950 border border-slate-800 focus:border-red-500 rounded-xl px-4 py-3 text-white text-sm font-bold focus:outline-none transition" placeholder="분석관명을 입력하세요 (예: 붉은전술가)" maxlength="12">
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">초기 자금 지급</label>
+                        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-center">
+                            <span class="block text-[10px] text-slate-500 font-bold uppercase tracking-wider">신규 분석관 공식 배팅 포인트</span>
+                            <span class="block text-3xl font-black text-amber-400 mt-1 font-mono">10,000 P</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Proceed Button -->
+                <button onclick="enterArena()" class="w-full bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-500 hover:to-blue-500 text-white font-extrabold py-4 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-circle-play"></i> GO
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="bg-slate-950/80 backdrop-blur-md border-b border-slate-900 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <span class="bg-gradient-to-r from-red-600 to-blue-600 text-[9px] font-black text-white px-2.5 py-1 rounded-md tracking-wider">
+                    PRE-MATCH
+                </span>
+                <div>
+                    <h1 class="text-sm font-bold text-white flex items-center gap-1.5">
+                        돈넣고 돈먹기
+                    </h1>
+                    <p class="text-[10px] text-slate-500 font-medium">KOR vs CZE • 6.12 11:00 매치</p>
+                </div>
+            </div>
+
+            <!-- Profile & Virtual Funds Display -->
+            <div class="flex items-center space-x-3">
+                <div class="hidden sm:flex flex-col text-right">
+                    <span id="player-badge" class="text-xs font-bold text-white">-</span>
+                    <span id="role-badge" class="text-[9px] text-slate-500 font-semibold">공식 분석 참가자</span>
+                </div>
+                <div class="bg-slate-900 border border-slate-800/80 px-4 py-2 rounded-full flex items-center space-x-3 shadow-inner">
+                    <div class="flex flex-col items-end">
+                        <span class="text-[8px] text-slate-500 font-bold uppercase leading-none">가용 포인트</span>
+                        <span id="user-points" class="text-amber-400 font-extrabold text-sm sm:text-base tracking-wider leading-tight mt-0.5 font-mono">0 P</span>
+                    </div>
+                    <button onclick="triggerRescueFund()" class="bg-slate-800 hover:bg-slate-700 p-1.5 rounded-full text-slate-400 hover:text-amber-400 transition" title="포인트 무료 보급소">
+                        <i class="fa-solid fa-circle-dollar-to-slot text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Interactive Dashboard Grid -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6 w-full">
+        
+        <!-- Left Column: Match Status & Betting Terminal (7 Columns) -->
+        <div class="lg:col-span-7 space-y-6">
+            
+            <!-- Match Preview Overview Card -->
+            <div class="bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 border border-slate-800 rounded-2xl p-6 relative overflow-hidden">
+                <div class="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#ef4444_1px,transparent_1px)] [background-size:24px_24px]"></div>
+                
+                <div class="relative z-10 space-y-5">
+                    <!-- Match Metadata info -->
+                    <div class="flex justify-between items-center">
+                        <span class="text-[11px] font-bold text-slate-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-map-location-dot text-red-500"></i> 과달라하라 경기장 (멕시코)
+                        </span>
+                        <span class="bg-slate-800/80 border border-slate-700/60 text-emerald-400 text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider flex items-center gap-1">
+                            <span class="h-1.5 w-1.5 bg-emerald-400 rounded-full animate-ping"></span> 예측 접수 진행 중
+                        </span>
+                    </div>
+
+                    <!-- Visual VS Matchup Display -->
+                    <div class="grid grid-cols-3 items-center text-center py-4">
+                        <!-- South Korea Team info -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-14 h-14 md:w-16 md:h-16 bg-red-600 rounded-2xl flex items-center justify-center shadow-lg border-4 border-red-500/20 transform hover:scale-105 transition">
+                                <span class="text-lg md:text-xl font-black text-white">KOR</span>
+                            </div>
+                            <h3 class="text-sm font-bold mt-2">대한민국</h3>
+                            <span class="text-[9px] text-slate-500 mt-0.5">FIFA 22위</span>
+                            <div class="flex gap-1 mt-1.5 flex-wrap justify-center">
+                                <span class="text-[8px] text-red-400 bg-red-950/40 px-1.5 py-0.5 rounded border border-red-900/30 font-semibold">손흥민</span>
+                                <span class="text-[8px] text-red-400 bg-red-950/40 px-1.5 py-0.5 rounded border border-red-900/30 font-semibold">이강인</span>
+                            </div>
+                        </div>
+
+                        <!-- Match Status Center -->
+                        <div class="flex flex-col items-center justify-center px-2">
+                            <span class="text-[10px] text-slate-500 font-extrabold uppercase tracking-widest">VS MATCHUP</span>
+                            <div class="text-slate-700 font-black text-2xl md:text-3xl tracking-widest my-1">PRE-START</div>
+                            <!-- Live Countdown -->
+                            <div id="countdown-timer" class="text-[10px] font-mono text-amber-500 bg-amber-950/20 px-2.5 py-1 rounded-md border border-amber-900/30 font-bold">
+                                00일 00시간 00분 00초
+                            </div>
+                        </div>
+
+                        <!-- Czech Team info -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-14 h-14 md:w-16 md:h-16 bg-blue-700 rounded-2xl flex items-center justify-center shadow-lg border-4 border-blue-500/20 transform hover:scale-105 transition">
+                                <span class="text-lg md:text-xl font-black text-white">CZE</span>
+                            </div>
+                            <h3 class="text-sm font-bold mt-2">체코</h3>
+                            <span class="text-[9px] text-slate-500 mt-0.5">FIFA 30위</span>
+                            <div class="flex gap-1 mt-1.5 flex-wrap justify-center">
+                                <span class="text-[8px] text-blue-400 bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-900/30 font-semibold">수체크</span>
+                                <span class="text-[8px] text-blue-400 bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-900/30 font-semibold">시크</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Betting Configuration Terminal -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+                <div>
+                    <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                        <span class="w-1.5 h-4 bg-red-500 rounded-full"></span> 1단계: 가상 배팅 타겟 지정
+                    </h2>
+                    <p class="text-[11px] text-slate-400 mt-0.5">정규 승부 결과 또는 정확한 스코어 중 예측할 마켓을 골라주세요.</p>
+                </div>
+
+                <!-- Market Selection Tabs -->
+                <div class="flex border-b border-slate-800">
+                    <button onclick="switchMarketTab('winner')" id="tab-winner" class="flex-1 pb-3 text-xs font-bold text-red-500 border-b-2 border-red-500 transition focus:outline-none">
+                        일반 승무패 (1X2)
+                    </button>
+                    <button onclick="switchMarketTab('score')" id="tab-score" class="flex-1 pb-3 text-xs font-bold text-slate-500 border-b-2 border-transparent transition focus:outline-none">
+                        정확한 스코어 (Score)
+                    </button>
+                </div>
+
+                <!-- Winner 1X2 Market Block -->
+                <div id="market-winner-container" class="grid grid-cols-3 gap-3">
+                    <button onclick="selectMatchBet('KOR', '대한민국 승', 2.25)" id="bet-kor" class="bet-target bg-slate-950 border-2 border-transparent hover:border-red-500 rounded-xl p-4 text-center transition group relative">
+                        <span class="block text-[10px] font-bold text-slate-400 group-hover:text-red-400 transition">대한민국 승</span>
+                        <span class="block text-2xl font-black text-red-500 mt-0.5 font-mono">2.25</span>
+                        <div class="absolute -bottom-1.5 left-1/2 transform -translate-x-1/2 text-[8px] text-red-500 font-black opacity-0 group-hover:opacity-100 transition">KOR WIN</div>
+                    </button>
+                    <button onclick="selectMatchBet('DRAW', '무승부', 3.20)" id="bet-draw" class="bet-target bg-slate-950 border-2 border-transparent hover:border-slate-500 rounded-xl p-4 text-center transition group relative">
+                        <span class="block text-[10px] font-bold text-slate-400 group-hover:text-slate-300 transition">무승부</span>
+                        <span class="block text-2xl font-black text-slate-300 mt-0.5 font-mono">3.20</span>
+                        <div class="absolute -bottom-1.5 left-1/2 transform -translate-x-1/2 text-[8px] text-slate-300 font-black opacity-0 group-hover:opacity-100 transition">DRAW</div>
+                    </button>
+                    <button onclick="selectMatchBet('CZE', '체코 승', 2.80)" id="bet-cze" class="bet-target bg-slate-950 border-2 border-transparent hover:border-blue-500 rounded-xl p-4 text-center transition group relative">
+                        <span class="block text-[10px] font-bold text-slate-400 group-hover:text-blue-400 transition">체코 승</span>
+                        <span class="block text-2xl font-black text-blue-500 mt-0.5 font-mono">2.80</span>
+                        <div class="absolute -bottom-1.5 left-1/2 transform -translate-x-1/2 text-[8px] text-blue-500 font-black opacity-0 group-hover:opacity-100 transition">CZE WIN</div>
+                    </button>
+                </div>
+
+                <!-- Correct Score Market Block (Hidden by default) -->
+                <div id="market-score-container" class="hidden space-y-4">
+                    <div class="flex items-center justify-center gap-6 bg-slate-950 rounded-2xl p-5 border border-slate-850">
+                        <!-- South Korea Score Stepper -->
+                        <div class="flex flex-col items-center gap-2">
+                            <span class="text-[11px] text-red-400 font-extrabold tracking-wider uppercase">KOR 골</span>
+                            <div class="flex items-center gap-2.5">
+                                <button onclick="adjustScore('kor', -1)" class="w-9 h-9 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-bold rounded-lg transition flex items-center justify-center focus:outline-none">
+                                    <i class="fa-solid fa-minus text-xs"></i>
+                                </button>
+                                <span id="score-kor-display" class="text-2xl font-black text-white font-mono w-8 text-center">2</span>
+                                <button onclick="adjustScore('kor', 1)" class="w-9 h-9 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-bold rounded-lg transition flex items-center justify-center focus:outline-none">
+                                    <i class="fa-solid fa-plus text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Spacer Match Split -->
+                        <span class="text-slate-700 font-black text-xl">:</span>
+
+                        <!-- Czech Score Stepper -->
+                        <div class="flex flex-col items-center gap-2">
+                            <span class="text-[11px] text-blue-400 font-extrabold tracking-wider uppercase">CZE 골</span>
+                            <div class="flex items-center gap-2.5">
+                                <button onclick="adjustScore('cze', -1)" class="w-9 h-9 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-bold rounded-lg transition flex items-center justify-center focus:outline-none">
+                                    <i class="fa-solid fa-minus text-xs"></i>
+                                </button>
+                                <span id="score-cze-display" class="text-2xl font-black text-white font-mono w-8 text-center">1</span>
+                                <button onclick="adjustScore('cze', 1)" class="w-9 h-9 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-bold rounded-lg transition flex items-center justify-center focus:outline-none">
+                                    <i class="fa-solid fa-plus text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Score Odds Indicator -->
+                    <div id="score-selection-indicator" class="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border border-red-950/40 rounded-xl p-4 text-center space-y-1">
+                        <span class="block text-[10px] text-slate-500 font-bold uppercase tracking-widest">실시간 스코어 가상 배당률</span>
+                        <div class="flex items-center justify-center gap-2.5">
+                            <span id="score-odds-text" class="text-sm font-bold text-white">대한민국 2 : 1 체코</span>
+                            <span id="score-odds-val" class="text-2xl font-black text-amber-400 font-mono">9.50</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stake Adjustment Area -->
+                <div class="space-y-4 pt-2 border-t border-slate-800">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                            <span class="w-1.5 h-4 bg-blue-500 rounded-full"></span> 2단계: 가상 배팅 포인트 투자액 결정
+                        </h2>
+                        <span id="current-balance-info" class="text-xs text-slate-400 font-semibold font-mono">보유: 0 P</span>
+                    </div>
+
+                    <!-- Slider Input Elements -->
+                    <div class="bg-slate-950 border border-slate-850 p-4 rounded-xl space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-slate-500 font-medium">자산 투자 조정기</span>
+                            <div class="flex items-center space-x-1.5">
+                                <input type="number" id="stake-number-input" oninput="onStakeNumberChange(this)" class="w-24 bg-slate-900 border border-slate-850 text-right font-black text-amber-400 px-2.5 py-1 rounded-md text-xs focus:outline-none focus:border-amber-400 font-mono" min="100">
+                                <span class="text-xs text-slate-400 font-bold">P</span>
+                            </div>
+                        </div>
+                        <input type="range" id="stake-slider" min="100" max="10000" step="100" value="1000" oninput="onStakeSliderChange(this)" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-red-500 focus:outline-none">
+                        
+                        <!-- Quick Point Buttons -->
+                        <div class="grid grid-cols-5 gap-2 font-mono">
+                            <button onclick="adjustStake(1000)" class="bg-slate-900 hover:bg-slate-800 text-slate-300 text-[10px] py-2 rounded-lg transition font-medium border border-slate-800">+1K</button>
+                            <button onclick="adjustStake(5000)" class="bg-slate-900 hover:bg-slate-800 text-slate-300 text-[10px] py-2 rounded-lg transition font-medium border border-slate-800">+5K</button>
+                            <button onclick="adjustStake('HALF')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 text-[10px] py-2 rounded-lg transition font-medium border border-slate-800">50%</button>
+                            <button onclick="adjustStake('MAX')" class="bg-slate-900 hover:bg-slate-800 text-amber-400 text-[10px] py-2 rounded-lg transition font-bold border border-slate-800">MAX</button>
+                            <button onclick="adjustStake('ALL-IN')" class="bg-red-950/40 hover:bg-red-900/40 text-red-300 text-[10px] py-2 rounded-lg transition font-black border border-red-900/40">ALL-IN</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Betting Slip Summary Block -->
+                <div id="bet-ticket-board" class="bg-slate-950 border border-slate-850 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="text-center md:text-left">
+                        <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">가상 영수증 발행 요약</span>
+                        <div class="mt-1">
+                            <span id="ticket-selection-text" class="text-sm font-bold text-white font-mono">옵션 선택 대기 중</span>
+                            <span id="ticket-stake-text" class="text-xs text-slate-400 ml-2 font-mono">투자금: 0 P</span>
+                        </div>
+                        <div id="ticket-payout-text" class="text-xs text-emerald-400 font-bold mt-1 font-mono">예상 환급 시: -</div>
+                    </div>
+                    
+                    <button id="submit-bet-btn" onclick="issuePredictionTicket()" class="w-full md:w-auto bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-500 hover:to-blue-500 text-white font-extrabold px-6 py-3.5 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-ticket"></i> 예측 티켓 발행하기
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: User Balance Summary & Tabs for Active Tickets vs Realtime Rankings (5 Columns) -->
+        <div class="lg:col-span-5 space-y-6">
+            
+            <!-- Overall Portfolio Scorecard -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+                <div class="flex justify-between items-center">
+                    <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                        <span class="w-1.5 h-4 bg-emerald-500 rounded-full"></span> 예측 자산 포트폴리오
+                    </h4>
+                    <span id="profile-level" class="bg-emerald-950/40 text-emerald-400 border border-emerald-900/30 text-[10px] px-2 py-0.5 rounded-md font-extrabold uppercase">LEVEL: ROOKIE</span>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2.5 text-center">
+                    <div class="bg-slate-950 border border-slate-850 p-3 rounded-xl">
+                        <span class="text-[9px] text-slate-500 block uppercase font-bold">총 자산</span>
+                        <span id="stat-total-assets" class="text-sm font-extrabold text-white font-mono">0 P</span>
+                    </div>
+                    <div class="bg-slate-950 border border-slate-850 p-3 rounded-xl">
+                        <span class="text-[9px] text-slate-500 block uppercase font-bold">접수된 티켓</span>
+                        <span id="stat-active-bets" class="text-sm font-extrabold text-blue-400 font-mono">0 건</span>
+                    </div>
+                    <div class="bg-slate-950 border border-slate-850 p-3 rounded-xl">
+                        <span class="text-[9px] text-slate-500 block uppercase font-bold">티켓 거치금</span>
+                        <span id="stat-locked-assets" class="text-sm font-extrabold text-amber-500 font-mono">0 P</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interchanging tab block -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 flex flex-col h-[520px]">
+                <div class="flex border-b border-slate-800">
+                    <button onclick="switchRightTab('tickets')" id="tab-tickets" class="flex-1 pb-3 text-xs font-bold text-red-500 border-b-2 border-red-500 transition focus:outline-none">
+                        가상 티켓 보관함
+                    </button>
+                    <button onclick="switchRightTab('rankings')" id="tab-rankings" class="flex-1 pb-3 text-xs font-bold text-slate-500 border-b-2 border-transparent transition focus:outline-none">
+                        실시간 랭킹 (명예의 전당)
+                    </button>
+                </div>
+
+                <!-- Active Prediction Tickets Storage (Visible by Default) -->
+                <div id="tickets-tab-content" class="flex-grow flex flex-col h-full overflow-hidden">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[10px] text-slate-500 font-mono font-bold">보증 증서</span>
+                        <span id="active-ticket-count" class="text-[10px] text-slate-500 font-mono font-bold">0 Active</span>
+                    </div>
+
+                    <!-- Ticket Storage Lists -->
+                    <div id="active-tickets-container" class="ticket-scroll flex-grow overflow-y-auto space-y-4 pr-1">
+                        <div class="text-center py-20 text-xs text-slate-500 flex flex-col items-center justify-center space-y-3">
+                            <i class="fa-solid fa-folder-open text-4xl block opacity-20"></i>
+                            <p>보관 중인 가상 예측 티켓이 없습니다.<br><span class="text-[10px] text-slate-600">왼쪽 보드에서 가상 분석 티켓을 발행해 보세요.</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Realtime Rankings Board (Hidden by default) -->
+                <div id="rankings-tab-content" class="hidden flex-grow flex flex-col h-full overflow-hidden">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[10px] text-slate-500 font-semibold font-sans">글로벌 예측가 랭킹</span>
+                        <span class="text-[9px] text-emerald-400 font-semibold flex items-center gap-1">
+                            <span class="h-1.5 w-1.5 bg-emerald-400 rounded-full animate-ping"></span> Realtime Live
+                        </span>
+                    </div>
+
+                    <!-- Leaderboard list container -->
+                    <div id="leaderboard-container" class="ticket-scroll flex-grow overflow-y-auto space-y-2.5 pr-1">
+                        <!-- Dynamic Rankings load in here -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer disclaimer -->
+    <footer class="bg-slate-950 border-t border-slate-900 py-6 text-center text-xs text-slate-500 mt-8">
+        <div class="max-w-7xl mx-auto px-4 space-y-2 leading-relaxed">
+            <p class="font-bold text-slate-400 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+                본 대시보드는 실제 경기 전, 유저가 포인트를 활용하여 예측 영수증을 발행해 보는 "순수 모의 예측(배팅) 시뮬레이션 시스템"입니다.
+            </p>
+            <p>실제 금전 결제, 충전, 환전, 도박 행위는 존재하지 않으며 어떠한 상업적 사행성 서비스도 대행하거나 유도하지 않습니다.</p>
+            <p class="text-slate-600 mt-2">&copy; 2026 World Cup Virtual Ticket Arena. Optimized for Premium Entertainment.</p>
+        </div>
+    </footer>
+
+    <!-- Emergency Refill Modal Structure -->
+    <div id="rescue-modal" class="fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-850 rounded-2xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl">
+            <div class="w-14 h-14 bg-emerald-950/60 text-emerald-400 border border-emerald-900/40 rounded-full flex items-center justify-center text-xl mx-auto">
+                <i class="fa-solid fa-arrows-spin animate-spin"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold text-white">배팅 포인트 무료 보충</h3>
+                <p id="rescue-msg" class="text-xs text-slate-400 mt-1">지급된 포인트가 모두 소진되었을 때, 추가 배팅 포인트를 지원받을 수 있습니다.</p>
+            </div>
+            <button onclick="approveRescueFund()" class="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-slate-950 font-black py-3 rounded-xl transition font-mono">
+                기본 포인트 10,000 P 무료 보충
+            </button>
+            <button onclick="closeRescueModal()" class="w-full bg-slate-950 hover:bg-slate-850 text-slate-400 py-2 rounded-xl text-xs transition">
+                취소하고 돌아가기
+            </button>
+        </div>
+    </div>
+
+    <!-- Core Application Logic Script (using Firebase modules) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Configuration setups
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'world-cup-predict-center';
+        let firebaseConfig = {};
+
+        if (typeof __firebase_config !== 'undefined') {
+            firebaseConfig = JSON.parse(__firebase_config);
+        } else {
+            // Local Test Sandbox environment config
+            firebaseConfig = {
+                apiKey: "mock-api-key",
+                authDomain: "mock-auth.firebaseapp.com",
+                projectId: "mock-project-id",
+                storageBucket: "mock-storage.appspot.com",
+                messagingSenderId: "123456",
+                appId: "1:123456:web:123456"
+            };
+        }
+
+        // Initialize App & DB
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Core App Local state (Saves synchronized values from DB)
+        let userProfile = {
+            name: "미인증 분석관",
+            balance: 10000,
+            lockedBalance: 0
+        };
+
+        let activeTab = 'winner'; // 'winner' or 'score'
+        let rightTab = 'tickets'; // 'tickets' or 'rankings'
+
+        let currentBetSelection = {
+            type: null, 
+            selectionName: "",
+            odds: 0,
+            stake: 1000
+        };
+
+        let savedWinnerSelection = {
+            type: null,
+            name: "",
+            odds: 0
+        };
+
+        let savedScoreSelection = {
+            kor: 2,
+            cze: 1
+        };
+
+        let activeTickets = [];
+        let globalRankings = [];
+        let authUser = null;
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            startCountdownTimer();
+            await authenticateAndSync();
+        });
+
+        async function authenticateAndSync() {
+            try {
+                // RULE 3: Custom Token Priority
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    const credentials = await signInWithCustomToken(auth, __initial_auth_token);
+                    authUser = credentials.user;
+                } else {
+                    const credentials = await signInAnonymously(auth);
+                    authUser = credentials.user;
+                }
+
+                if (authUser) {
+                    console.log("Logged in anonymously as UID:", authUser.uid);
+                    await initializeUserData(authUser.uid);
+                    setupGlobalRankingsListener();
+                }
+            } catch (error) {
+                console.error("Firebase authentication and sync failed: ", error);
+                // Fail-safe: Hide Connection Loader so they can play locally in-memory if DB fails
+                document.getElementById('connection-loader').classList.add('hidden');
+                document.getElementById('login-screen').classList.remove('hidden');
+            }
+        }
+
+        // User profile and tickets initialization
+        async function initializeUserData(uid) {
+            // Path strict checks: Rule 1
+            const profileDocRef = doc(db, 'artifacts', appId, 'users', uid, 'profile_collection', 'user_profile');
+            const profileSnap = await getDoc(profileDocRef);
+
+            if (profileSnap.exists()) {
+                // If cloud profile exists, skip onboarding
+                userProfile = profileSnap.data();
+                document.getElementById('connection-loader').classList.add('hidden');
+                document.getElementById('login-screen').classList.add('hidden');
+                setupRealtimeListeners(uid);
+            } else {
+                // Profile does not exist yet. Prompt login screen
+                document.getElementById('connection-loader').classList.add('hidden');
+                document.getElementById('login-screen').classList.remove('hidden');
+            }
+        }
+
+        function setupRealtimeListeners(uid) {
+            const profileDocRef = doc(db, 'artifacts', appId, 'users', uid, 'profile_collection', 'user_profile');
+            
+            // Profile listener
+            onSnapshot(profileDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    userProfile = docSnap.data();
+                    syncDashboardUI();
+                }
+            }, (err) => console.error("Profile onSnapshot failed: ", err));
+
+            // Tickets listener
+            const ticketsColRef = collection(db, 'artifacts', appId, 'users', uid, 'tickets_collection');
+            onSnapshot(ticketsColRef, (colSnap) => {
+                const ticketsList = [];
+                colSnap.forEach((doc) => {
+                    ticketsList.push(doc.data());
+                });
+                
+                // Sort by timestamp desc locally
+                activeTickets = ticketsList.sort((a,b) => b.rawTimestamp - a.rawTimestamp);
+                
+                // Recalculate locked assets
+                const totalStakeSum = activeTickets.reduce((sum, ticket) => sum + ticket.stake, 0);
+                userProfile.lockedBalance = totalStakeSum;
+                
+                syncDashboardUI();
+                updateLeaderboardRecord();
+            }, (err) => console.error("Tickets onSnapshot failed: ", err));
+        }
+
+        // Setup public leaderboard updater & real-time rankings listener
+        function setupGlobalRankingsListener() {
+            const leaderboardColRef = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
+            
+            // Listen to all leaderboard items and sort in memory (Rule 2)
+            onSnapshot(leaderboardColRef, (colSnap) => {
+                const rankData = [];
+                colSnap.forEach((doc) => {
+                    rankData.push(doc.data());
+                });
+
+                // Memory-sort based on total assets
+                globalRankings = rankData.sort((a, b) => b.totalAssets - a.totalAssets);
+                renderGlobalLeaderboard();
+            }, (err) => console.error("Rankings onSnapshot failed: ", err));
+        }
+
+        async function updateLeaderboardRecord() {
+            if (!authUser) return;
+            const uid = authUser.uid;
+            const total = userProfile.balance + userProfile.lockedBalance;
+
+            try {
+                const leadDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', uid);
+                await setDoc(leadDocRef, {
+                    uid: uid,
+                    name: userProfile.name,
+                    totalAssets: total,
+                    updatedAt: Date.now()
+                }, { merge: true });
+            } catch (err) {
+                console.error("Failed to write to public leaderboard: ", err);
+            }
+        }
+
+        // Onboarding form submit
+        async function enterArena() {
+            const nameField = document.getElementById('username-input').value.trim();
+            if (!nameField) {
+                showToast("분석관의 닉네임을 올바르게 입력해 주세요.", "error");
+                return;
+            }
+
+            if (!authUser) {
+                showToast("데이터베이스 접속이 지연되고 있습니다. 다시 시도해 주세요.", "error");
+                return;
+            }
+
+            const uid = authUser.uid;
+            userProfile.name = nameField;
+            userProfile.balance = 10000;
+            userProfile.lockedBalance = 0;
+
+            try {
+                // Initialize profile in Firestore
+                const profileDocRef = doc(db, 'artifacts', appId, 'users', uid, 'profile_collection', 'user_profile');
+                await setDoc(profileDocRef, userProfile);
+
+                // Initialize leaderboard position
+                const leadDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', uid);
+                await setDoc(leadDocRef, {
+                    uid: uid,
+                    name: nameField,
+                    totalAssets: 10000,
+                    updatedAt: Date.now()
+                });
+
+                // Start Listening to changes
+                setupRealtimeListeners(uid);
+
+                const loginOverlay = document.getElementById('login-screen');
+                loginOverlay.style.transition = "opacity 0.5s ease";
+                loginOverlay.style.opacity = "0";
+                setTimeout(() => {
+                    loginOverlay.classList.add('hidden');
+                }, 500);
+
+                showToast(`${userProfile.name} 분석관님, 클라우드 가상 계정이 연동되었으며 10,000 P가 정상 충전되었습니다!`, "success");
+            } catch (err) {
+                console.error("Onboarding failed: ", err);
+                showToast("서버 저장에 실패했습니다. 네트워크 확인 후 다시 GO를 눌러주세요.", "error");
+            }
+        }
+
+        // Active selection tab switcher
+        function switchMarketTab(tab) {
+            activeTab = tab;
+            const tabWinner = document.getElementById('tab-winner');
+            const tabScore = document.getElementById('tab-score');
+            const containerWinner = document.getElementById('market-winner-container');
+            const containerScore = document.getElementById('market-score-container');
+
+            if (tab === 'winner') {
+                tabWinner.classList.add('text-red-500', 'border-red-500');
+                tabWinner.classList.remove('text-slate-500', 'border-transparent');
+                tabScore.classList.add('text-slate-500', 'border-transparent');
+                tabScore.classList.remove('text-red-500', 'border-red-500');
+
+                containerWinner.classList.remove('hidden');
+                containerScore.classList.add('hidden');
+
+                if (savedWinnerSelection.type) {
+                    selectMatchBet(savedWinnerSelection.type, savedWinnerSelection.name, savedWinnerSelection.odds, false);
+                } else {
+                    currentBetSelection.type = null;
+                    currentBetSelection.selectionName = "";
+                    currentBetSelection.odds = 0;
+                }
+            } else {
+                tabScore.classList.add('text-red-500', 'border-red-500');
+                tabScore.classList.remove('text-slate-500', 'border-transparent');
+                tabWinner.classList.add('text-slate-500', 'border-transparent');
+                tabWinner.classList.remove('text-red-500', 'border-red-500');
+
+                containerWinner.classList.add('hidden');
+                containerScore.classList.remove('hidden');
+
+                updateScoreSelectionAndOdds();
+            }
+            updateTicketSummarySlip();
+        }
+
+        // Right side Tab Switcher (Tickets list vs Leaderboard rankings)
+        function switchRightTab(tab) {
+            rightTab = tab;
+            const tabTickets = document.getElementById('tab-tickets');
+            const tabRankings = document.getElementById('tab-rankings');
+            const contentTickets = document.getElementById('tickets-tab-content');
+            const contentRankings = document.getElementById('rankings-tab-content');
+
+            if (tab === 'tickets') {
+                tabTickets.classList.add('text-red-500', 'border-red-500');
+                tabTickets.classList.remove('text-slate-500', 'border-transparent');
+                tabRankings.classList.add('text-slate-500', 'border-transparent');
+                tabRankings.classList.remove('text-red-500', 'border-red-500');
+
+                contentTickets.classList.remove('hidden');
+                contentRankings.classList.add('hidden');
+            } else {
+                tabRankings.classList.add('text-red-500', 'border-red-500');
+                tabRankings.classList.remove('text-slate-500', 'border-transparent');
+                tabTickets.classList.add('text-slate-500', 'border-transparent');
+                tabTickets.classList.remove('text-red-500', 'border-red-500');
+
+                contentTickets.classList.add('hidden');
+                contentRankings.classList.remove('hidden');
+                renderGlobalLeaderboard();
+            }
+        }
+
+        // Stepper score adjust logic
+        function adjustScore(team, val) {
+            if (team === 'kor') {
+                savedScoreSelection.kor = Math.max(0, Math.min(9, savedScoreSelection.kor + val));
+                document.getElementById('score-kor-display').innerText = savedScoreSelection.kor;
+            } else {
+                savedScoreSelection.cze = Math.max(0, Math.min(9, savedScoreSelection.cze + val));
+                document.getElementById('score-cze-display').innerText = savedScoreSelection.cze;
+            }
+            updateScoreSelectionAndOdds();
+        }
+
+        // Score dynamic odds mapping engine
+        function calculateScoreOdds(kor, cze) {
+            const totalGoals = kor + cze;
+            if (totalGoals > 8) return 150.00;
+
+            const scoreOddsMap = {
+                "0:0": 8.50, "1:1": 6.20, "2:2": 13.00, "3:3": 55.00, "4:4": 120.00,
+                "1:0": 7.50, "2:0": 11.00, "2:1": 9.50, "3:0": 21.00, "3:1": 19.00, "3:2": 34.00, "4:0": 55.00, "4:1": 50.00, "4:2": 80.00,
+                "0:1": 8.50, "0:2": 13.50, "1:2": 10.50, "0:3": 26.00, "1:3": 23.00, "2:3": 38.00, "0:4": 75.00, "1:4": 65.00, "2:4": 95.00
+            };
+
+            const key = `${kor}:${cze}`;
+            if (scoreOddsMap[key]) {
+                return scoreOddsMap[key];
+            }
+
+            let base = 25.00;
+            if (kor > cze) base = 2.25;
+            else if (kor === cze) base = 3.20;
+            else base = 2.80;
+
+            const factor = Math.max(1, totalGoals) * 3.8;
+            let finalOdds = base * factor + (Math.abs(kor - cze) * 5.5);
+            return parseFloat(Math.min(150.00, Math.max(5.00, finalOdds)).toFixed(2));
+        }
+
+        function updateScoreSelectionAndOdds() {
+            const kor = savedScoreSelection.kor;
+            const cze = savedScoreSelection.cze;
+            const calculatedOdds = calculateScoreOdds(kor, cze);
+
+            const displayStr = `대한민국 ${kor} : ${cze} 체코`;
+            document.getElementById('score-odds-text').innerText = displayStr;
+            document.getElementById('score-odds-val').innerText = calculatedOdds.toFixed(2);
+
+            currentBetSelection.type = 'SCORE';
+            currentBetSelection.selectionName = displayStr;
+            currentBetSelection.odds = calculatedOdds;
+
+            updateTicketSummarySlip();
+        }
+
+        // Keeping Interfacing Synced with Global & Local state
+        function syncDashboardUI() {
+            document.getElementById('player-badge').innerText = userProfile.name;
+            document.getElementById('user-points').innerText = userProfile.balance.toLocaleString() + ' P';
+            document.getElementById('current-balance-info').innerText = "보유: " + userProfile.balance.toLocaleString() + " P";
+
+            const totalAssets = userProfile.balance + userProfile.lockedBalance;
+
+            document.getElementById('stat-total-assets').innerText = totalAssets.toLocaleString() + " P";
+            document.getElementById('stat-locked-assets').innerText = userProfile.lockedBalance.toLocaleString() + " P";
+            document.getElementById('stat-active-bets').innerText = activeTickets.length + " 건";
+            document.getElementById('active-ticket-count').innerText = `${activeTickets.length} Active`;
+
+            const slider = document.getElementById('stake-slider');
+            slider.max = Math.max(100, userProfile.balance);
+            if (parseInt(slider.value) > userProfile.balance) {
+                slider.value = userProfile.balance;
+            }
+            if (userProfile.balance < 100) {
+                slider.min = 0;
+                slider.value = 0;
+            } else {
+                slider.min = 100;
+            }
+
+            document.getElementById('stake-number-input').value = slider.value;
+            currentBetSelection.stake = parseInt(slider.value);
+
+            let grade = "Rookie Analyst";
+            if (totalAssets >= 100000) grade = "Elite Grandmaster";
+            else if (totalAssets >= 50000) grade = "Pro Analyst";
+            else if (totalAssets >= 20000) grade = "Senior Planner";
+            document.getElementById('profile-level').innerText = `LEVEL: ${grade}`;
+
+            updateTicketSummarySlip();
+            renderActiveTicketsList();
+        }
+
+        // Handle numeric stake input
+        function onStakeSliderChange(element) {
+            let val = parseInt(element.value);
+            if (val > userProfile.balance) val = userProfile.balance;
+            document.getElementById('stake-number-input').value = val;
+            currentBetSelection.stake = val;
+            updateTicketSummarySlip();
+        }
+
+        function onStakeNumberChange(element) {
+            let val = parseInt(element.value) || 0;
+            if (val > userProfile.balance) val = userProfile.balance;
+            if (val < 0) val = 0;
+
+            const slider = document.getElementById('stake-slider');
+            slider.value = val;
+            currentBetSelection.stake = val;
+            updateTicketSummarySlip();
+        }
+
+        function adjustStake(type) {
+            const slider = document.getElementById('stake-slider');
+            let val = parseInt(slider.value) || 0;
+
+            if (type === 'HALF') {
+                val = Math.floor(userProfile.balance / 2);
+            } else if (type === 'MAX') {
+                val = Math.min(20000, userProfile.balance);
+            } else if (type === 'ALL-IN') {
+                val = userProfile.balance;
+            } else {
+                val += parseInt(type);
+            }
+
+            if (val > userProfile.balance) val = userProfile.balance;
+            if (val < 100 && userProfile.balance >= 100) val = 100;
+
+            slider.value = val;
+            document.getElementById('stake-number-input').value = val;
+            currentBetSelection.stake = val;
+            updateTicketSummarySlip();
+        }
+
+        function selectMatchBet(type, name, odds, showToastFlag = true) {
+            currentBetSelection.type = type;
+            currentBetSelection.selectionName = name;
+            currentBetSelection.odds = odds;
+
+            savedWinnerSelection.type = type;
+            savedWinnerSelection.name = name;
+            savedWinnerSelection.odds = odds;
+
+            const targets = document.querySelectorAll('.bet-target');
+            targets.forEach(t => {
+                t.classList.remove('border-red-500', 'border-slate-500', 'border-blue-500', 'bg-red-950/20', 'bg-blue-950/20');
+            });
+
+            const activeBtn = document.getElementById(`bet-${type.toLowerCase()}`);
+            if (type === 'KOR') activeBtn.classList.add('border-red-500', 'bg-red-950/20');
+            if (type === 'DRAW') activeBtn.classList.add('border-slate-500', 'bg-slate-900');
+            if (type === 'CZE') activeBtn.classList.add('border-blue-500', 'bg-blue-950/20');
+
+            updateTicketSummarySlip();
+            if (showToastFlag) {
+                showToast(`예측 마켓이 [${name}]으로 지정되었습니다.`, "info");
+            }
+        }
+
+        function updateTicketSummarySlip() {
+            const textSelect = document.getElementById('ticket-selection-text');
+            const textStake = document.getElementById('ticket-stake-text');
+            const textPayout = document.getElementById('ticket-payout-text');
+
+            if (!currentBetSelection.type) {
+                textSelect.innerText = "옵션 선택 대기 중";
+                textStake.innerText = "투자금: 0 P";
+                textPayout.innerText = "예상 환급 시: -";
+                return;
+            }
+
+            textSelect.innerText = `${currentBetSelection.selectionName} (${currentBetSelection.odds.toFixed(2)}배)`;
+            textStake.innerText = `투자금: ${currentBetSelection.stake.toLocaleString()} P`;
+
+            const estResult = Math.floor(currentBetSelection.stake * currentBetSelection.odds);
+            textPayout.innerText = `예상 가상 수령금: ${estResult.toLocaleString()} P (+${(estResult - currentBetSelection.stake).toLocaleString()} P)`;
+        }
+
+        // Processing Virtual betting Slip creation and saving to Cloud
+        async function issuePredictionTicket() {
+            if (!currentBetSelection.type) {
+                showToast("예측 배팅 대상(승무패 또는 스코어)을 먼저 지정해 주세요.", "error");
+                return;
+            }
+            if (currentBetSelection.stake <= 0) {
+                showToast("포인트 조절기를 조작해 투자할 액수를 설정해 주세요.", "error");
+                return;
+            }
+            if (currentBetSelection.stake > userProfile.balance) {
+                showToast("가용 잔고를 초과해 티켓을 발행할 수 없습니다.", "error");
+                return;
+            }
+            if (!authUser) {
+                showToast("사용자 인증 정보 로딩 중입니다. 잠시 후 시도해 주세요.", "error");
+                return;
+            }
+
+            const uid = authUser.uid;
+
+            // Instantly deduct local point to prevent double-click abuse
+            userProfile.balance -= currentBetSelection.stake;
+
+            const ticketHash = 'TX-2026' + Array.from({length: 8}, () => Math.floor(Math.random()*16).toString(16).toUpperCase()).join('');
+            const barcodeVal = Array.from({length: 12}, () => Math.floor(Math.random()*10)).join('');
+
+            const newTicket = {
+                id: ticketHash,
+                barcode: barcodeVal,
+                selection: currentBetSelection.selectionName,
+                marketType: currentBetSelection.type,
+                stake: currentBetSelection.stake,
+                odds: currentBetSelection.odds,
+                rawTimestamp: Date.now(),
+                timestamp: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                date: new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' })
+            };
+
+            try {
+                // Save Ticket to Subcollection (Strict Path Requirement: Rule 1)
+                const ticketDocRef = doc(db, 'artifacts', appId, 'users', uid, 'tickets_collection', ticketHash);
+                await setDoc(ticketDocRef, newTicket);
+
+                // Update Profile in database
+                const profileDocRef = doc(db, 'artifacts', appId, 'users', uid, 'profile_collection', 'user_profile');
+                await setDoc(profileDocRef, userProfile);
+
+                showToast("🎟️ 가상 예측 티켓이 클라우드 보관소에 안전하게 전송되었습니다!", "success");
+            } catch (err) {
+                console.error("Failed to issue prediction ticket: ", err);
+                // Revert point state locally on failure
+                userProfile.balance += currentBetSelection.stake;
+                syncDashboardUI();
+                showToast("네트워크 장애로 티켓 전송에 실패했습니다.", "error");
+            }
+        }
+
+        // Cancel Ticket (Refunding point from Cloud)
+        async function cancelTicket(ticketId) {
+            const ticket = activeTickets.find(t => t.id === ticketId);
+            if (!ticket) return;
+            if (!authUser) return;
+
+            const uid = authUser.uid;
+            
+            // Revert state locally
+            userProfile.balance += ticket.stake;
+
+            try {
+                // Delete from Cloud (Strict path: Rule 1)
+                const ticketDocRef = doc(db, 'artifacts', appId, 'users', uid, 'tickets_collection', ticketId);
+                await deleteDoc(ticketDocRef);
+
+                // Update Profile
+                const profileDocRef = doc(db, 'artifacts', appId, 'users', uid, 'profile_collection', 'user_profile');
+                await setDoc(profileDocRef, userProfile);
+
+                showToast("✅ 클라우드 동기화 완료: 티켓 철회 및 포인트 환불 완료되었습니다.", "success");
+            } catch (err) {
+                console.error("Failed to cancel ticket: ", err);
+                userProfile.balance -= ticket.stake;
+                syncDashboardUI();
+                showToast("네트워크 상태를 확인해 주세요. 철회 처리가 무산되었습니다.", "error");
+            }
+        }
+
+        // Render Active Slips in Box
+        function renderActiveTicketsList() {
+            const container = document.getElementById('active-tickets-container');
+            if (activeTickets.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-20 text-xs text-slate-500 flex flex-col items-center justify-center space-y-3">
+                        <i class="fa-solid fa-folder-open text-4xl block opacity-20"></i>
+                        <p>보관 중인 가상 예측 티켓이 없습니다.<br><span class="text-[10px] text-slate-600">왼쪽 보드에서 가상 분석 티켓을 발행해 보세요.</span></p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = activeTickets.map(ticket => {
+                return `
+                    <div class="bg-slate-950 border border-slate-850 rounded-2xl overflow-hidden relative shadow-md">
+                        <div class="p-4 space-y-3 border-b border-dashed border-slate-800">
+                            <div class="flex justify-between items-center">
+                                <span class="font-mono text-[9px] text-slate-500 font-bold">${ticket.id}</span>
+                                <span class="bg-blue-950 text-blue-400 border border-blue-900/60 text-[8px] px-2 py-0.5 rounded font-black tracking-widest uppercase">ACTIVE</span>
+                            </div>
+
+                            <div class="flex justify-between items-end font-mono">
+                                <div>
+                                    <span class="text-[9px] text-slate-500 block font-sans font-semibold">예측 마켓 항목</span>
+                                    <strong class="text-sm text-white font-sans font-bold">${ticket.selection}</strong>
+                                    <span class="text-amber-500 text-xs font-bold ml-1.5">${ticket.odds.toFixed(2)}배</span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-[9px] text-slate-500 block font-sans font-semibold">예측 거치금</span>
+                                    <span class="text-xs font-bold text-slate-200">${ticket.stake.toLocaleString()} P</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900/50 px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+                            <div class="flex flex-col items-center sm:items-start space-y-1">
+                                <div class="flex space-x-[2px] h-6 opacity-30 select-none">
+                                    <div class="w-[2px] bg-white h-full"></div>
+                                    <div class="w-[1px] bg-white h-full"></div>
+                                    <div class="w-[3px] bg-white h-full"></div>
+                                    <div class="w-[1px] bg-white h-full"></div>
+                                    <div class="w-[2px] bg-white h-full"></div>
+                                    <div class="w-[4px] bg-white h-full"></div>
+                                    <div class="w-[1px] bg-white h-full"></div>
+                                    <div class="w-[2px] bg-white h-full"></div>
+                                    <div class="w-[3px] bg-white h-full"></div>
+                                </div>
+                                <span class="text-[8px] font-mono text-slate-600">${ticket.barcode}</span>
+                            </div>
+
+                            <div class="flex items-center space-x-1.5 w-full sm:w-auto">
+                                <button onclick="copyTicketRaw('${ticket.id}')" class="flex-grow sm:flex-grow-0 bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 px-3 py-1.5 rounded-lg text-[10px] font-bold transition flex items-center justify-center gap-1" title="클립보드 복사">
+                                    <i class="fa-solid fa-copy"></i> 복사
+                                </button>
+                                <button onclick="cancelTicket('${ticket.id}')" class="flex-grow sm:flex-grow-0 bg-red-950/30 hover:bg-red-900/40 border border-red-900/40 text-red-400 px-3 py-1.5 rounded-lg text-[10px] font-black transition flex items-center justify-center gap-1" title="예측 취소 및 100% 반환">
+                                    <i class="fa-solid fa-rotate-left"></i> 철회
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Render Global Realtime rankings
+        function renderGlobalLeaderboard() {
+            const container = document.getElementById('leaderboard-container');
+            if (globalRankings.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-24 text-xs text-slate-500">
+                        <p>명예의 전당 등록 데이터를 조회하는 중입니다...</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = globalRankings.map((user, index) => {
+                const isMe = authUser && user.uid === authUser.uid;
+                let rankColor = "text-slate-400";
+                let rankBadge = `${index + 1}위`;
+                
+                if (index === 0) {
+                    rankColor = "text-amber-400";
+                    rankBadge = "👑 1위";
+                } else if (index === 1) {
+                    rankColor = "text-slate-300";
+                    rankBadge = "🥈 2위";
+                } else if (index === 2) {
+                    rankColor = "text-amber-700";
+                    rankBadge = "🥉 3위";
+                }
+
+                return `
+                    <div class="flex items-center justify-between p-3.5 rounded-xl border ${isMe ? 'bg-red-950/20 border-red-900/40' : 'bg-slate-950 border-slate-850'} transition">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-xs font-black w-10 font-mono ${rankColor}">${rankBadge}</span>
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-white flex items-center gap-1">
+                                    ${user.name}
+                                    ${isMe ? '<span class="bg-red-600 text-white text-[8px] px-1 py-0.2 rounded font-mono">MY</span>' : ''}
+                                </span>
+                                <span class="text-[9px] text-slate-600 font-semibold uppercase tracking-wider">
+                                    최종 갱신: ${new Date(user.updatedAt).toLocaleTimeString('ko-KR', {hour: '2-digit', minute: '2-digit'})}
+                                </span>
+                            </div>
+                        </div>
+                        <span class="text-xs font-extrabold text-amber-400 font-mono">${user.totalAssets.toLocaleString()} P</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Copy Ticket details to clipboard
+        function copyTicketRaw(ticketId) {
+            const ticket = activeTickets.find(t => t.id === ticketId);
+            if (!ticket) return;
+
+            const textToCopy = `[돈넣고 돈먹기 가상 예측 영수증]\n발행번호: ${ticket.id}\n날짜: ${ticket.date} ${ticket.timestamp}\n예측 항목: ${ticket.selection}\n배당률: ${ticket.odds.toFixed(2)}배\n가상 투자금: ${ticket.stake.toLocaleString()} P\n예상 수령액: ${Math.floor(ticket.stake * ticket.odds).toLocaleString()} P\n(본 인증서는 가상 예측 시뮬레이션용 증서입니다.)`;
+            
+            const textBuffer = document.createElement("textarea");
+            textBuffer.value = textToCopy;
+            document.body.appendChild(textBuffer);
+            textBuffer.select();
+            document.execCommand('copy');
+            document.body.removeChild(textBuffer);
+
+            showToast("📋 가상 영수증 정보가 클립보드에 깔끔하게 복사되었습니다!", "info");
+        }
+
+        // Free Rescue Point Modal triggers
+        function triggerRescueFund() {
+            if (userProfile.balance >= 1000) {
+                document.getElementById('rescue-msg').innerText = `현재 자산(${userProfile.balance.toLocaleString()} P)이 아직 충분히 남아 있습니다. 보급은 잔고가 1,000 P 미만일 때만 무료 승인 가능합니다.`;
+            } else {
+                document.getElementById('rescue-msg').innerText = `현재 배팅 포인트 잔고가 부족합니다. 무료 구제 시스템을 통해 기본 10,000 P를 즉시 클라우드에 긴급 충전해 드립니다.`;
+            }
+            document.getElementById('rescue-modal').classList.remove('hidden');
+        }
+
+        async function approveRescueFund() {
+            if (userProfile.balance >= 1000) {
+                showToast("아직 여유 배팅 포인트가 충분하여 보충금을 수령할 수 없습니다.", "error");
+                closeRescueModal();
+                return;
+            }
+
+            if (!authUser) return;
+            const uid = authUser.uid;
+
+            // Increment point locally
+            userProfile.balance += 10000;
+
+            try {
+                // Save to Cloud
+                const profileDocRef = doc(db, 'artifacts', appId, 'users', uid, 'profile_collection', 'user_profile');
+                await setDoc(profileDocRef, userProfile);
+
+                closeRescueModal();
+                showToast("💰 무료 구제금 10,000 P 보충이 데이터베이스에 실시간 기록되었습니다!", "success");
+            } catch (err) {
+                console.error("Rescue failed: ", err);
+                userProfile.balance -= 10000;
+                syncDashboardUI();
+                showToast("통신 장애로 보급포인트 저장에 실패했습니다.", "error");
+            }
+        }
+
+        function closeRescueModal() {
+            document.getElementById('rescue-modal').classList.add('hidden');
+        }
+
+        // Countdown timer (Pure design decoration representation)
+        function startCountdownTimer() {
+            const kickoffTime = new Date('2026-06-12T11:00:00+09:00').getTime();
+
+            function updateTime() {
+                const now = new Date().getTime();
+                const diff = kickoffTime - now;
+
+                if (diff <= 0) {
+                    document.getElementById('countdown-timer').innerText = "매치 라이브 상태";
+                    return;
+                }
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById('countdown-timer').innerText = `${days}일 ${hours}시간 ${minutes}분 ${seconds}초`;
+            }
+
+            updateTime();
+            setInterval(updateTime, 1000);
+        }
+
+        // Custom non-blocking visual toast notification alerts
+        function showToast(message, type = "info") {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-6 right-6 px-5 py-4 rounded-xl text-xs font-bold shadow-2xl z-50 transition-all duration-300 transform translate-y-10 opacity-0 flex items-center gap-3`;
+            
+            if (type === 'success') {
+                toast.classList.add('bg-slate-900', 'text-emerald-400', 'border', 'border-emerald-800/60');
+                toast.innerHTML = `<i class="fa-solid fa-shield-halved text-base text-emerald-400 animate-pulse"></i> <span>${message}</span>`;
+            } else if (type === 'error') {
+                toast.classList.add('bg-slate-900', 'text-red-400', 'border', 'border-red-800/60');
+                toast.innerHTML = `<i class="fa-solid fa-circle-exclamation text-base text-red-500"></i> <span>${message}</span>`;
+            } else {
+                toast.classList.add('bg-slate-900', 'text-blue-400', 'border', 'border-blue-900/60');
+                toast.innerHTML = `<i class="fa-solid fa-circle-info text-base text-blue-400"></i> <span>${message}</span>`;
+            }
+
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-10', 'opacity-0');
+            }, 50);
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-10', 'opacity-0');
+                setTimeout(() => { toast.remove(); }, 300);
+            }, 3500);
+        }
+
+        // Map global variables for HTML Event attribute binding
+        window.enterArena = enterArena;
+        window.triggerRescueFund = triggerRescueFund;
+        window.switchMarketTab = switchMarketTab;
+        window.switchRightTab = switchRightTab;
+        window.selectMatchBet = selectMatchBet;
+        window.adjustScore = adjustScore;
+        window.onStakeNumberChange = onStakeNumberChange;
+        window.onStakeSliderChange = onStakeSliderChange;
+        window.adjustStake = adjustStake;
+        window.issuePredictionTicket = issuePredictionTicket;
+        window.approveRescueFund = approveRescueFund;
+        window.closeRescueModal = closeRescueModal;
+        window.cancelTicket = cancelTicket;
+        window.copyTicketRaw = copyTicketRaw;
+
+    </script>
+</body>
+</html>
