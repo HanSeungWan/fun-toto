@@ -86,7 +86,7 @@
             <p class="text-sm text-slate-400 font-medium animate-pulse">실시간 클라우드 데이터베이스 연결 상태 검증 중...</p>
         </section>
 
-        <!-- SETUP FIREBASE REQUIRED SCREEN (Shown when config is missing or invalid) -->
+        <!-- SETUP FIREBASE REQUIRED SCREEN -->
         <section id="firebase-setup-container" class="hidden w-full max-w-lg bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl my-8">
             <div class="text-center mb-6">
                 <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center">
@@ -155,10 +155,10 @@
             </form>
         </section>
 
-        <!-- 2. GAME LOBBY PANEL (MAIN CONTENT) -->
+        <!-- 2. GAME LOBBY PANEL -->
         <section id="lobby-container" class="hidden w-full grid grid-cols-1 lg:grid-cols-12 gap-6 my-6">
             
-            <!-- LEFT: MATCH CARD & BETTING MODULE (7 COLS) -->
+            <!-- LEFT: MATCH CARD & BETTING MODULE -->
             <div class="lg:col-span-8 flex flex-col gap-6">
                 
                 <!-- Match Preview Banner -->
@@ -216,7 +216,7 @@
                         </button>
                     </div>
 
-                    <!-- TAB CONTENTS 1: WIN DRAW WIN -->
+                    <!-- TAB CONTENTS 1 -->
                     <div id="pane-1x2" class="grid grid-cols-3 gap-3 mb-6">
                         <button data-type="1x2" data-pick="KOR" class="option-btn group bg-slate-950 hover:bg-slate-850 border-2 border-slate-850 hover:border-emerald-500/40 p-4 rounded-xl text-center transition flex flex-col items-center gap-1">
                             <span class="text-xs text-slate-400 font-semibold">대한민국 승</span>
@@ -232,12 +232,11 @@
                         </button>
                     </div>
 
-                    <!-- TAB CONTENTS 2: CORRECT SCORE -->
+                    <!-- TAB CONTENTS 2 -->
                     <div id="pane-score" class="hidden bg-slate-950 border border-slate-850 p-5 rounded-xl mb-6">
-                        <p class="text-xs text-slate-400 text-center mb-4">예상되는 최종 양 팀 스코어를 설정해 보세요. 스코어에 맞춰 실시간 배당률이 산출됩니다.</p>
+                        <p class="text-xs text-slate-400 text-center mb-4">예상 스코어에 맞춰 실시간으로 배당률이 자동 조합 산출됩니다.</p>
                         
                         <div class="flex items-center justify-between max-w-sm mx-auto mb-4">
-                            <!-- Korea counter -->
                             <div class="flex flex-col items-center gap-2">
                                 <span class="text-xs font-bold text-rose-400">대한민국</span>
                                 <div class="flex items-center gap-1 bg-slate-900 border border-slate-800 rounded-lg p-1">
@@ -249,7 +248,6 @@
 
                             <span class="text-lg font-black text-slate-700">:</span>
 
-                            <!-- Czech counter -->
                             <div class="flex flex-col items-center gap-2">
                                 <span class="text-xs font-bold text-blue-400">체코</span>
                                 <div class="flex items-center gap-1 bg-slate-900 border border-slate-800 rounded-lg p-1">
@@ -260,7 +258,6 @@
                             </div>
                         </div>
 
-                        <!-- Odds display and lock target -->
                         <div class="border-t border-slate-800/80 pt-4 text-center">
                             <button id="btn-lock-score" class="w-full bg-slate-900 hover:bg-slate-850 border-2 border-slate-800 hover:border-emerald-500 py-3 rounded-xl flex items-center justify-between px-4 transition group">
                                 <span class="text-sm font-semibold text-slate-300">위 스코어로 타겟 설정</span>
@@ -279,13 +276,11 @@
                             2단계. 예측 포인트 설정
                         </h3>
 
-                        <!-- Selected Target Alert Display -->
                         <div class="bg-slate-950 border border-slate-850 rounded-xl p-3 mb-4 flex items-center justify-between text-sm">
                             <span class="text-slate-400">선택한 예측 타겟 :</span>
                             <span id="display-selected-target" class="font-extrabold text-white text-right">선택 안 됨</span>
                         </div>
 
-                        <!-- Amount range slider -->
                         <div class="mb-4">
                             <div class="flex justify-between items-center text-xs text-slate-400 font-semibold mb-2">
                                 <span>최소 100 P</span>
@@ -296,7 +291,7 @@
                                 class="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-emerald-500">
                         </div>
 
-                        <!-- Preset Buttons -->
+                        <!-- Presets -->
                         <div class="grid grid-cols-4 gap-2 mb-6">
                             <button data-action="add" data-val="1000" class="btn-preset py-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-750 text-xs text-slate-300 font-semibold transition active:bg-slate-900">+1,000</button>
                             <button data-action="add" data-val="5000" class="btn-preset py-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-750 text-xs text-slate-300 font-semibold transition active:bg-slate-900">+5,000</button>
@@ -316,7 +311,6 @@
                             </div>
                         </div>
 
-                        <!-- SUBMIT BET -->
                         <button id="btn-submit-bet" class="w-full py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-lg flex items-center justify-center gap-2 transition transform active:scale-[0.98] shadow-lg shadow-emerald-500/10">
                             <i data-lucide="printer" class="w-5 h-5"></i>
                             <span>예측 티켓 발행하기</span>
@@ -325,7 +319,7 @@
                 </div>
             </div>
 
-            <!-- RIGHT: ACTIVE SLIPS & LEADERBOARD (4 COLS) -->
+            <!-- RIGHT: ACTIVE SLIPS & LEADERBOARD -->
             <div class="lg:col-span-4 flex flex-col gap-6">
 
                 <!-- ACTIVE SLIPS BAG -->
@@ -338,9 +332,7 @@
                         <span id="ticket-count" class="text-xs bg-slate-950 border border-slate-850 px-2 py-0.5 rounded-md font-bold text-slate-400 ticket-font">0장</span>
                     </div>
 
-                    <!-- Slip list container -->
                     <div id="slips-container" class="flex-grow overflow-y-auto space-y-3 pr-1 text-slate-400 text-sm flex flex-col justify-start">
-                        <!-- Empty State -->
                         <div id="slips-empty" class="my-auto text-center flex flex-col items-center justify-center gap-3">
                             <i data-lucide="sticky-note" class="w-12 h-12 text-slate-800 stroke-1"></i>
                             <p class="text-slate-500 text-xs text-center">발행된 배팅 티켓이 없습니다.<br>좌측에서 예측을 설정해 발행해 보세요.</p>
@@ -358,9 +350,7 @@
                         <span class="text-xs text-slate-500 font-semibold">클라우드 갱신</span>
                     </div>
 
-                    <!-- Ranking List -->
                     <div id="leaderboard-list" class="flex-grow overflow-y-auto space-y-2 pr-1">
-                        <!-- Simulated Loaders -->
                         <div class="animate-pulse space-y-2">
                             <div class="h-10 bg-slate-950/40 rounded-lg border border-slate-850"></div>
                             <div class="h-10 bg-slate-950/40 rounded-lg border border-slate-850"></div>
@@ -374,10 +364,10 @@
 
     <!-- FOOTER -->
     <footer class="border-t border-slate-900 bg-slate-950/80 py-4 text-center">
-        <p class="text-[11px] text-slate-600">본 사이트는 모의 재미 목적의 가상 예측 플랫폼이며 실제 재화, 금전, 사행 행위와 완전히 무관합니다.</p>
+        <p class="text-[11px] text-slate-600">본 사이트는 오직 모의 재미 목적의 가상 예측 플랫폼이며 실제 재화, 금전, 사행 행위와 완전히 무관합니다.</p>
     </footer>
 
-    <!-- CUSTOM DARK MODAL DIALOG (Replaces basic Browser Alerts/Confirms) -->
+    <!-- CUSTOM DIALOG MODAL -->
     <div id="custom-dialog" class="hidden fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4 transition-transform transform scale-100">
             <div class="flex items-center gap-3 text-emerald-400">
@@ -401,7 +391,6 @@
         // =========================================================================
         // ⚙️ [필수 구성] 깃허브 배포 시 친구들과 항상 동일한 파이어베이스 DB를 유지하려면
         // 아래 괄호 내에 본인의 Firebase 정보를 작성해 두세요! 
-        // 미기입 시 첫 실행 시에 화면 상에서 사용자가 직접 등록할 수 있는 패널이 나타납니다.
         // =========================================================================
         const myFirebaseConfig = {
             apiKey: "AIzaSyBiiIRKd3QOI0AGedlDxjhuUTQH4UsRTB0",
@@ -410,17 +399,18 @@
             storageBucket: "funproject-5ebfc.firebasestorage.app",
             messagingSenderId: "22039341965",
             appId: "1:22039341965:web:13b1edbb51693086316bc4"
-          };
-        const defaultAppId = "fun-toto-2026";
+        };
+        const myAppId = "1:22039341965:web:13b1edbb51693086316bc4"; // 고유 앱식별 아이디 정의
+        const defaultAppId = "1:22039341965:web:13b1edbb51693086316bc4";
 
         // Global States
         let isFirebaseActive = false;
         let db = null;
         let auth = null;
         let appId = defaultAppId;
-        let currentUser = null; // Authed User object
+        let currentUser = null; 
 
-        // Reactive User State (Fetched entirely from Firestore Document)
+        // Reactive User State (Firestore Document)
         let userProfile = {
             uid: "",
             username: "",
@@ -436,7 +426,6 @@
             odds: 0.00
         };
 
-        // UI Counter variables
         let scoreKOR = 0;
         let scoreCZE = 0;
 
@@ -492,13 +481,11 @@
 
         lucide.createIcons();
 
-        // Safe Custom UI Modal (Promise-based Alert/Confirm replacement)
+        // Safe Custom UI Modal
         function showCustomDialog({ title, message, isConfirm = false, icon = "info" }) {
             return new Promise((resolve) => {
                 dialogTitle.innerText = title;
                 dialogMessage.innerText = message;
-                
-                // Set Icon
                 dialogIcon.setAttribute('data-lucide', icon);
                 lucide.createIcons();
 
@@ -531,11 +518,19 @@
             });
         }
 
-        // Initialize Firebase strictly following Rule 3
         async function bootPlatform() {
             let config = null;
 
-            // 1. Look for custom setting inside localStorage (saved via form)
+            // 4-Second Loading Failsafe Barrier (Guarantees spinner will never run forever)
+            setTimeout(() => {
+                if (!isFirebaseActive && !connectionLoader.classList.contains('hidden')) {
+                    console.warn("Firebase boot timeout. Redirecting to custom settings console.");
+                    connectionLoader.classList.add('hidden');
+                    firebaseSetupContainer.classList.remove('hidden');
+                }
+            }, 4000);
+
+            // 1. Look for custom setting inside localStorage
             const localStoredCfg = localStorage.getItem('sim_strict_fb_config');
             const localStoredAppId = localStorage.getItem('sim_strict_fb_appid');
             if (localStoredCfg && localStoredAppId) {
@@ -543,7 +538,7 @@
                     config = JSON.parse(localStoredCfg);
                     appId = localStoredAppId;
                 } catch(e) {
-                    console.error("저장된 Custom JSON 파싱에 실패했습니다.");
+                    console.error("Custom JSON 파싱 실패");
                 }
             }
 
@@ -558,12 +553,12 @@
             }
 
             // 3. Look for hardcoded variables
-            if (!config && myFirebaseConfig.apiKey) {
+            if (!config && myFirebaseConfig && myFirebaseConfig.apiKey) {
                 config = myFirebaseConfig;
                 appId = myAppId || defaultAppId;
             }
 
-            // If no configuration is active, enforce the user to supply one
+            // If no config found, proceed to config input screen
             if (!config) {
                 connectionLoader.classList.add('hidden');
                 firebaseSetupContainer.classList.remove('hidden');
@@ -571,7 +566,6 @@
             }
 
             try {
-                // Initialize services
                 const app = initializeApp(config);
                 auth = getAuth(app);
                 db = getFirestore(app);
@@ -583,7 +577,6 @@
                     await signInAnonymously(auth);
                 }
 
-                // Listen to Auth State
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
                         currentUser = user;
@@ -603,17 +596,10 @@
             } catch (err) {
                 console.error("Firebase Connection Error", err);
                 connectionLoader.classList.add('hidden');
-                await showCustomDialog({
-                    title: "서버 연결 오류",
-                    message: "파이어베이스 클라우드 연결에 실패했습니다. 입력한 구성 키 정보와 네트워크 환경을 다시 확인해 주세요.",
-                    icon: "wifi-off"
-                });
-                // Open setup panel
                 firebaseSetupContainer.classList.remove('hidden');
             }
         }
 
-        // Firebase Custom Configuration Setup handler
         document.getElementById('setup-keys-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const appIdVal = document.getElementById('setup-app-id').value.trim();
@@ -627,13 +613,12 @@
             } catch(e) {
                 showCustomDialog({
                     title: "양식 오류",
-                    message: "입력된 구성 정보가 올바른 JSON 포맷이 아닙니다. 정확하게 복사-붙여넣기 했는지 체크해 주세요.",
+                    message: "올바른 JSON 포맷이 아닙니다.",
                     icon: "alert-triangle"
                 });
             }
         });
 
-        // Safe Screen Router
         function showScreen(container) {
             connectionLoader.classList.add('hidden');
             firebaseSetupContainer.classList.add('hidden');
@@ -643,12 +628,10 @@
             container.classList.remove('hidden');
         }
 
-        // Check user profiles inside Firestore strictly
         async function checkUserProfileAndDirect() {
             if (!currentUser) return;
 
             try {
-                // RULE 1: Profile Document is stored in users private folder
                 const profileRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'main');
                 const profileSnap = await getDoc(profileRef);
 
@@ -659,7 +642,6 @@
                     };
                     enterLobby();
                 } else {
-                    // Profile does not exist yet -> trigger username setup onboarding screen
                     showScreen(loginContainer);
                 }
             } catch (err) {
@@ -668,14 +650,12 @@
             }
         }
 
-        // Onboarding Login form submit
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = usernameInput.value.trim();
             if (!name || !currentUser) return;
 
             try {
-                // RULE 1: Set user private profile document in Firestore
                 const profileRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'main');
                 const initialProfile = {
                     username: name,
@@ -684,7 +664,6 @@
                 };
                 await setDoc(profileRef, initialProfile);
 
-                // RULE 1: Set public ranking record for global list (allows search & display without listing private directories)
                 const rankingRef = doc(db, 'artifacts', appId, 'public', 'data', 'rankings', currentUser.uid);
                 await setDoc(rankingRef, {
                     username: name,
@@ -699,16 +678,15 @@
 
                 enterLobby();
             } catch (err) {
-                console.error("가입 중 오류가 발생했습니다:", err);
+                console.error("Registration failed:", err);
                 await showCustomDialog({
                     title: "프로필 등록 실패",
-                    message: "클라우드 서버에 사용자 데이터를 저장하지 못했습니다. Firebase 데이터베이스 보안 규칙(Rule) 설정을 점검하세요.",
+                    message: "Firebase 데이터베이스 보안 규칙 설정을 점검하세요.",
                     icon: "shield-alert"
                 });
             }
         });
 
-        // Initialize Lobby Dashboard
         async function enterLobby() {
             headerUsername.innerText = userProfile.username;
             headerBalance.innerText = `${userProfile.points.toLocaleString()} P`;
@@ -716,20 +694,16 @@
             showScreen(lobbyContainer);
             headerUserPanel.classList.remove('hidden');
 
-            // Start Realtime listeners for Active Tickets & Rankings
             startUserTicketsListener();
             startGlobalLeaderboardListener();
             updateBettingConsoleUI();
         }
 
-        // Realtime Bet Slips Loader (RULE 1 & 3)
         let unsubscribeTickets = null;
         function startUserTicketsListener() {
             if (!currentUser) return;
 
-            // RULE 1: Fetch from /artifacts/{appId}/users/{userId}/tickets
             const ticketsCol = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'tickets');
-            
             unsubscribeTickets = onSnapshot(ticketsCol, (snapshot) => {
                 activeTickets = [];
                 snapshot.forEach((docSnap) => {
@@ -739,24 +713,19 @@
                     });
                 });
                 
-                // Sort by newest
                 activeTickets.sort((a, b) => b.createdAt - a.createdAt);
                 renderUserTickets();
                 updateBettingConsoleUI();
             }, (error) => {
-                console.error("티켓 동기화 실패:", error);
+                console.error("Ticket sync error:", error);
             });
         }
 
-        // Realtime Leaderboard Loader (RULE 1, 2 & 3)
         let unsubscribeRankings = null;
         function startGlobalLeaderboardListener() {
             if (!currentUser) return;
 
-            // RULE 1: Fetch from public path
             const rankingsCol = collection(db, 'artifacts', appId, 'public', 'data', 'rankings');
-            
-            // RULE 2: No complex queries used, sort in browser memory
             unsubscribeRankings = onSnapshot(rankingsCol, (snapshot) => {
                 const rawRankings = [];
                 snapshot.forEach((docSnap) => {
@@ -766,15 +735,13 @@
                     });
                 });
 
-                // Sort by total points in memory
                 rawRankings.sort((a, b) => b.totalPoints - a.totalPoints);
                 renderLeaderboard(rawRankings);
             }, (error) => {
-                console.error("랭킹 동기화 실패:", error);
+                console.error("Leaderboard sync error:", error);
             });
         }
 
-        // Render user bet slips
         function renderUserTickets() {
             ticketCountLabel.innerText = `${activeTickets.length}장`;
 
@@ -825,7 +792,6 @@
                         </button>
                     </div>
 
-                    <!-- decorative structural barcode -->
                     <div class="mt-3 pt-2 border-t border-dashed border-slate-850 flex flex-col items-center justify-center opacity-30">
                         <div class="h-6 w-full bg-[linear-gradient(90deg,#fff_2px,transparent_2px,#fff_4px,transparent_8px,#fff_10px,transparent_11px,#fff_15px,transparent_17px,#fff_21px,transparent_22px)] opacity-25"></div>
                         <span class="text-[8px] text-slate-500 ticket-font mt-1">VERIFICATION CLOUD SECURE: ${ticket.id}</span>
@@ -837,7 +803,6 @@
             lucide.createIcons();
         }
 
-        // Render rankings
         function renderLeaderboard(rankings) {
             leaderboardList.innerHTML = "";
 
@@ -871,7 +836,6 @@
             });
         }
 
-        // Action controllers
         tab1x2.addEventListener('click', () => {
             tab1x2.className = "py-2.5 px-4 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 bg-slate-800 text-white";
             tabScore.className = "py-2.5 px-4 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white";
@@ -888,7 +852,6 @@
             resetActiveSelection();
         });
 
-        // 1X2 Button picks
         document.querySelectorAll('.option-btn[data-type="1x2"]').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.option-btn[data-type="1x2"]').forEach(b => b.classList.remove('border-emerald-500', 'bg-emerald-500/10'));
@@ -909,29 +872,6 @@
                 updateBettingConsoleUI();
             });
         });
-
-        // Score matrix calculator
-        function calculateScoreOdds(kor, cze) {
-            if (kor === 1 && cze === 1) return 6.50;
-            if (kor === 1 && cze === 0) return 7.20;
-            if (kor === 2 && cze === 1) return 8.50;
-            if (kor === 0 && cze === 1) return 9.00;
-            if (kor === 2 && cze === 0) return 11.00;
-            if (kor === 0 && cze === 0) return 12.00;
-            if (kor === 1 && cze === 2) return 13.00;
-            if (kor === 2 && cze === 2) return 15.00;
-            if (kor === 3 && cze === 1) return 19.00;
-            if (kor === 0 && cze === 2) return 21.00;
-            if (kor === 3 && cze === 2) return 26.00;
-
-            const totalGoals = kor + cze;
-            const diff = Math.abs(kor - cze);
-            let base = 15.0;
-            base += totalGoals * 8.0;
-            base += diff * 5.0;
-            if (kor > 4 || cze > 4) base += 50.0;
-            return Math.min(150.0, parseFloat(base.toFixed(2)));
-        }
 
         btnScoreKorMinus.addEventListener('click', () => { if (scoreKOR > 0) { scoreKOR--; updateScoreCounterUI(); } });
         btnScoreKorPlus.addEventListener('click', () => { if (scoreKOR < 9) { scoreKOR++; updateScoreCounterUI(); } });
@@ -971,7 +911,6 @@
             updateBettingConsoleUI();
         });
 
-        // Preset quick configuration buttons
         document.querySelectorAll('.btn-preset').forEach(btn => {
             btn.addEventListener('click', () => {
                 const action = btn.getAttribute('data-action');
@@ -991,7 +930,6 @@
             });
         });
 
-        // Compute layout values based on react states
         function updateBettingConsoleUI() {
             const currentPoints = userProfile.points;
             betSlider.max = Math.max(100, currentPoints);
@@ -1024,7 +962,6 @@
             displayPayoutRate.innerText = `${selectedBet.odds.toFixed(2)} 배`;
         }
 
-        // Submitting real Cloud Ticket
         btnSubmitBet.addEventListener('click', async () => {
             if (!selectedBet.pick || !currentUser) return;
             const betAmount = parseInt(betSlider.value);
@@ -1047,7 +984,6 @@
                 return;
             }
 
-            // Create Ticket payload
             const ticketId = 'TX-' + Math.random().toString(36).substr(2, 9).toUpperCase();
             const newTicket = {
                 type: selectedBet.type,
@@ -1058,11 +994,9 @@
             };
 
             try {
-                // Update Local Model first to reflect immediate visual response
                 userProfile.points -= betAmount;
                 headerBalance.innerText = `${userProfile.points.toLocaleString()} P`;
 
-                // Firestore Transact Sync (RULE 1 & RULE 3)
                 const ticketRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'tickets', ticketId);
                 await setDoc(ticketRef, newTicket);
 
@@ -1088,13 +1022,12 @@
 
             } catch (err) {
                 console.error("Ticket submit failed:", err);
-                // Rollback local model
                 userProfile.points += betAmount;
                 headerBalance.innerText = `${userProfile.points.toLocaleString()} P`;
                 
                 await showCustomDialog({
                     title: "서버 처리 에러",
-                    message: "클라우드 통신 실패로 예측 발급을 취소했습니다. 파이어베이스 권한 설정을 점검해 보세요.",
+                    message: "클라우드 통신 실패로 예측 발급을 취소했습니다.",
                     icon: "alert-triangle"
                 });
             }
@@ -1104,7 +1037,6 @@
             return tickets.reduce((sum, ticket) => sum + ticket.amount, 0);
         }
 
-        // Cancel / Refund Ticket controller linked to globally accessible window context
         window.refundTicket = async function(ticketId) {
             const target = activeTickets.find(t => t.id === ticketId);
             if (!target || !currentUser) return;
@@ -1123,7 +1055,6 @@
                 userProfile.points += refundAmount;
                 headerBalance.innerText = `${userProfile.points.toLocaleString()} P`;
 
-                // Firestore Document deletions (RULE 1 & RULE 3)
                 const ticketRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'tickets', ticketId);
                 await deleteDoc(ticketRef);
 
@@ -1155,7 +1086,6 @@
             }
         };
 
-        // Copy slip text context handler
         window.copyTicket = async function(ticketId) {
             const target = activeTickets.find(t => t.id === ticketId);
             if (!target) return;
@@ -1181,7 +1111,6 @@
             }
         };
 
-        // Free 10,000P recharge controller
         btnResetPoints.addEventListener('click', async () => {
             const confirmResult = await showCustomDialog({
                 title: "자금 보충 충전",
@@ -1220,7 +1149,6 @@
             }
         });
 
-        // Trigger bootstrap configuration
         bootPlatform();
 
     </script>
