@@ -13,7 +13,7 @@
         
         body {
             font-family: 'Pretendard', sans-serif;
-            background-color: #0b0f17;
+            background-color: #05070c;
             color: #f3f4f6;
         }
         
@@ -27,83 +27,124 @@
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #0f172a;
+            background: #090d16;
         }
         ::-webkit-scrollbar-thumb {
-            background: #334155;
+            background: #1e293b;
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #475569;
+            background: #334155;
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-black">
 
     <!-- TOP HEADER -->
-    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40 transition-all">
+    <header class="border-b border-slate-900 bg-slate-950/80 backdrop-blur sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-950/20">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-950/30">
                     <i data-lucide="coins" class="w-6 h-6 text-slate-950"></i>
                 </div>
                 <div>
                     <h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
                         돈넣고 돈먹기 
-                        <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-normal">재미로 하는 배팅</span>
+                        <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full font-normal">재미로 하는 배팅</span>
                     </h1>
                 </div>
             </div>
 
-            <!-- User Info and Settings -->
+            <!-- User Info and Connection Panel -->
             <div id="header-user-panel" class="hidden flex items-center gap-4">
-                <div class="bg-slate-950 px-4 py-2 rounded-xl border border-slate-800 flex items-center gap-2">
+                <div class="bg-slate-900 px-4 py-2 rounded-xl border border-slate-800 flex items-center gap-2">
                     <span class="text-xs text-slate-400 font-medium" id="header-username">--</span>
                     <div class="w-px h-3 bg-slate-800"></div>
-                    <span class="text-sm font-bold text-emerald-400 ticket-font" id="header-balance">10,000 P</span>
+                    <span class="text-sm font-bold text-emerald-400 ticket-font" id="header-balance">0 P</span>
                 </div>
 
-                <!-- Database Status Pill -->
-                <button id="db-status-btn" class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-semibold transition border border-slate-700/50">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" id="db-status-dot"></span>
-                    <span id="db-status-text">로컬 모드</span>
+                <!-- Database Status Indicator -->
+                <button id="db-status-btn" class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-xs text-slate-300 font-semibold transition border border-slate-800">
+                    <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" id="db-status-dot"></span>
+                    <span id="db-status-text">연결 대기 중</span>
                 </button>
 
-                <!-- Refresh / Reset Button -->
-                <button id="btn-reset-points" title="배팅 포인트 10,000P 충전" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition">
+                <!-- Free Recharge Button -->
+                <button id="btn-reset-points" title="가상 배팅 머니 10,000P 충전" class="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white transition border border-slate-800">
                     <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- MAIN SECTION -->
-    <main class="flex-grow max-w-7xl w-full mx-auto p-4 flex flex-col items-center justify-center">
+    <!-- MAIN CONSOLE -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 flex flex-col items-center justify-center relative">
 
-        <!-- 1. LOGIN ONBOARDING PANEL -->
-        <section id="login-container" class="w-full max-w-md bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl relative overflow-hidden my-8">
+        <!-- LOADING SPINNER BLOCK -->
+        <section id="connection-loader" class="flex flex-col items-center justify-center py-20 gap-4">
+            <div class="w-12 h-12 rounded-full border-4 border-slate-800 border-t-emerald-500 animate-spin"></div>
+            <p class="text-sm text-slate-400 font-medium animate-pulse">실시간 클라우드 데이터베이스 연결 상태 검증 중...</p>
+        </section>
+
+        <!-- SETUP FIREBASE REQUIRED SCREEN (Shown when config is missing or invalid) -->
+        <section id="firebase-setup-container" class="hidden w-full max-w-lg bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl my-8">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center">
+                    <i data-lucide="database" class="w-8 h-8 text-rose-400"></i>
+                </div>
+                <h2 class="text-xl font-black text-white">데이터베이스 연결 세팅이 요구됩니다</h2>
+                <p class="text-xs text-slate-400 mt-2">이 앱은 100% Firebase 클라우드 연동 전용으로, 로컬 임시 보존을 지원하지 않습니다.</p>
+            </div>
+
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-850 text-xs text-slate-300 space-y-2 mb-6">
+                <p class="font-bold text-emerald-400 flex items-center gap-1">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    구축 연결 방법:
+                </p>
+                <p>1. 구글 Firebase Console에서 무료 Web 프로젝트를 개설합니다.</p>
+                <p>2. 발급된 SDK JSON 구성 정보를 아래 칸에 복사해 넣으세요.</p>
+                <p>3. 저장 시 즉시 활성화되며, 다른 모든 사용자들과 실시간 랭킹이 영구 연동됩니다!</p>
+            </div>
+
+            <form id="setup-keys-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">앱 식별 ID (App ID)</label>
+                    <input type="text" id="setup-app-id" required placeholder="예: fun-toto-application" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-white focus:border-emerald-500 focus:outline-none font-semibold">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Firebase SDK Config (JSON Format)</label>
+                    <textarea id="setup-json-config" required rows="6" placeholder='{ "apiKey": "AIzaSy...", "authDomain": "...", "projectId": "..." }' class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-white font-mono focus:border-emerald-500 focus:outline-none placeholder-slate-800"></textarea>
+                </div>
+                <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-sm flex items-center justify-center gap-2 transition active:scale-[0.98]">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    데이터베이스 활성화 및 연동
+                </button>
+            </form>
+        </section>
+
+        <!-- 1. USER REGISTER ONBOARDING PANEL -->
+        <section id="login-container" class="hidden w-full max-w-md bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl relative overflow-hidden my-8">
             <div class="absolute -top-10 -right-10 w-40 h-40 bg-emerald-500/5 rounded-full blur-3xl"></div>
-            <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-teal-500/5 rounded-full blur-3xl"></div>
-
-            <div class="text-center mb-8 relative z-10">
-                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center">
+            
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center">
                     <i data-lucide="user-check" class="w-8 h-8 text-emerald-400"></i>
                 </div>
                 <h2 class="text-2xl font-black tracking-tight text-white">재미로 하는 배팅</h2>
-                <p class="text-sm text-slate-400 mt-2">대한민국 vs 체코 경기 가상 시뮬레이션 베터 등록</p>
+                <p class="text-sm text-slate-400 mt-2">대한민국 vs 체코 경기 실시간 가상 클라우드 베터 등록</p>
             </div>
 
-            <form id="login-form" class="space-y-4 relative z-10">
+            <form id="login-form" class="space-y-4">
                 <div>
                     <label for="username" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">베터 닉네임</label>
                     <input type="text" id="username" required maxlength="12" placeholder="닉네임을 입력해 주세요 (최대 12자)" 
-                        class="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none transition font-medium">
+                        class="w-full bg-slate-950 border border-slate-800 hover:border-slate-700 focus:border-emerald-500 rounded-xl px-4 py-3 text-white placeholder-slate-650 focus:outline-none transition font-medium">
                 </div>
 
                 <div class="bg-emerald-950/20 border border-emerald-900/30 p-4 rounded-xl flex items-start gap-3">
                     <i data-lucide="sparkles" class="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5"></i>
                     <p class="text-xs leading-relaxed text-emerald-300">
-                        입장 시 가상의 예측 보조 자금 <strong>10,000 P(포인트)</strong>가 실시간으로 안전하게 무상 지급됩니다. 언제든지 무료 충전이 가능합니다.
+                        환영합니다! 가입 즉시 실시간 데이터베이스에 계정이 연동되며, 가상 배팅 자금 <strong>10,000 P</strong>가 계정에 즉시 원격 충전되어 보관됩니다.
                     </p>
                 </div>
 
@@ -121,10 +162,10 @@
             <div class="lg:col-span-8 flex flex-col gap-6">
                 
                 <!-- Match Preview Banner -->
-                <div class="bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-                    <div class="bg-slate-950/60 px-4 py-3 border-b border-slate-800 flex justify-between items-center">
+                <div class="bg-gradient-to-r from-slate-900 to-slate-950 border border-slate-850 rounded-2xl overflow-hidden shadow-xl">
+                    <div class="bg-slate-950/80 px-4 py-3 border-b border-slate-900 flex justify-between items-center">
                         <span class="flex items-center gap-2 text-xs text-slate-400 font-semibold uppercase tracking-widest">
-                            <span class="w-2 h-2 rounded-full bg-rose-500"></span> 2026 북중미 월드컵 경기
+                            <span class="w-2 h-2 rounded-full bg-rose-500"></span> 2026 북중미 월드컵 경기 1차전
                         </span>
                         <span class="text-xs text-rose-400 font-bold ticket-font">D-DAY 11:00 AM (금)</span>
                     </div>
@@ -132,7 +173,7 @@
                     <div class="p-6 md:p-8 flex items-center justify-between gap-4 max-w-lg mx-auto">
                         <!-- Korea -->
                         <div class="flex flex-col items-center text-center flex-1">
-                            <div class="w-16 h-16 md:w-20 md:h-20 bg-rose-600 rounded-full flex items-center justify-center text-3xl font-bold shadow-lg shadow-rose-950/40 relative">
+                            <div class="w-16 h-16 md:w-20 md:h-20 bg-rose-650 rounded-full flex items-center justify-center text-3xl font-bold shadow-lg shadow-rose-950/40 relative">
                                 🇰🇷
                             </div>
                             <h3 class="text-base md:text-lg font-bold text-white mt-3">대한민국</h3>
@@ -147,7 +188,7 @@
 
                         <!-- Czech -->
                         <div class="flex flex-col items-center text-center flex-1">
-                            <div class="w-16 h-16 md:w-20 md:h-20 bg-blue-600 rounded-full flex items-center justify-center text-3xl font-bold shadow-lg shadow-blue-950/40">
+                            <div class="w-16 h-16 md:w-20 md:h-20 bg-blue-650 rounded-full flex items-center justify-center text-3xl font-bold shadow-lg shadow-blue-950/40">
                                 🇨🇿
                             </div>
                             <h3 class="text-base md:text-lg font-bold text-white mt-3">체코</h3>
@@ -164,7 +205,7 @@
                     </h3>
 
                     <!-- TABS -->
-                    <div class="grid grid-cols-2 gap-2 p-1 bg-slate-950 rounded-xl mb-6 border border-slate-800">
+                    <div class="grid grid-cols-2 gap-2 p-1 bg-slate-950 rounded-xl mb-6 border border-slate-850">
                         <button id="tab-1x2" class="py-2.5 px-4 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 bg-slate-800 text-white">
                             <i data-lucide="activity" class="w-4 h-4"></i>
                             일반 승무패 (1X2)
@@ -177,44 +218,44 @@
 
                     <!-- TAB CONTENTS 1: WIN DRAW WIN -->
                     <div id="pane-1x2" class="grid grid-cols-3 gap-3 mb-6">
-                        <button data-type="1x2" data-pick="KOR" class="option-btn group bg-slate-950 hover:bg-slate-800 border-2 border-slate-800 hover:border-emerald-500/40 p-4 rounded-xl text-center transition flex flex-col items-center gap-1">
+                        <button data-type="1x2" data-pick="KOR" class="option-btn group bg-slate-950 hover:bg-slate-850 border-2 border-slate-850 hover:border-emerald-500/40 p-4 rounded-xl text-center transition flex flex-col items-center gap-1">
                             <span class="text-xs text-slate-400 font-semibold">대한민국 승</span>
-                            <span class="text-2xl font-black text-rose-400 ticket-font mt-1">2.10</span>
+                            <span class="text-2xl font-black text-rose-450 ticket-font mt-1">2.10</span>
                         </button>
-                        <button data-type="1x2" data-pick="DRAW" class="option-btn group bg-slate-950 hover:bg-slate-800 border-2 border-slate-800 hover:border-emerald-500/40 p-4 rounded-xl text-center transition flex flex-col items-center gap-1">
+                        <button data-type="1x2" data-pick="DRAW" class="option-btn group bg-slate-950 hover:bg-slate-850 border-2 border-slate-850 hover:border-emerald-500/40 p-4 rounded-xl text-center transition flex flex-col items-center gap-1">
                             <span class="text-xs text-slate-400 font-semibold">무승부</span>
                             <span class="text-2xl font-black text-slate-300 ticket-font mt-1">3.40</span>
                         </button>
-                        <button data-type="1x2" data-pick="CZE" class="option-btn group bg-slate-950 hover:bg-slate-800 border-2 border-slate-800 hover:border-emerald-500/40 p-4 rounded-xl text-center transition flex flex-col items-center gap-1">
+                        <button data-type="1x2" data-pick="CZE" class="option-btn group bg-slate-950 hover:bg-slate-850 border-2 border-slate-850 hover:border-emerald-500/40 p-4 rounded-xl text-center transition flex flex-col items-center gap-1">
                             <span class="text-xs text-slate-400 font-semibold">체코 승</span>
-                            <span class="text-2xl font-black text-blue-400 ticket-font mt-1">2.85</span>
+                            <span class="text-2xl font-black text-blue-450 ticket-font mt-1">2.85</span>
                         </button>
                     </div>
 
                     <!-- TAB CONTENTS 2: CORRECT SCORE -->
-                    <div id="pane-score" class="hidden bg-slate-950 border border-slate-800/80 p-5 rounded-xl mb-6">
-                        <p class="text-xs text-slate-400 text-center mb-4">예상되는 최종 양 팀 스코어를 설정해 보세요. 스코어에 맞춰 실시간 연동 배당률이 산출됩니다.</p>
+                    <div id="pane-score" class="hidden bg-slate-950 border border-slate-850 p-5 rounded-xl mb-6">
+                        <p class="text-xs text-slate-400 text-center mb-4">예상되는 최종 양 팀 스코어를 설정해 보세요. 스코어에 맞춰 실시간 배당률이 산출됩니다.</p>
                         
                         <div class="flex items-center justify-between max-w-sm mx-auto mb-4">
                             <!-- Korea counter -->
                             <div class="flex flex-col items-center gap-2">
                                 <span class="text-xs font-bold text-rose-400">대한민국</span>
                                 <div class="flex items-center gap-1 bg-slate-900 border border-slate-800 rounded-lg p-1">
-                                    <button id="btn-score-kor-minus" class="w-8 h-8 rounded bg-slate-800 hover:bg-slate-700 font-bold flex items-center justify-center">-</button>
+                                    <button id="btn-score-kor-minus" type="button" class="w-8 h-8 rounded bg-slate-800 hover:bg-slate-700 font-bold flex items-center justify-center">-</button>
                                     <span id="score-kor-val" class="w-8 text-center text-lg font-black ticket-font">0</span>
-                                    <button id="btn-score-kor-plus" class="w-8 h-8 rounded bg-slate-800 hover:bg-slate-700 font-bold flex items-center justify-center">+</button>
+                                    <button id="btn-score-kor-plus" type="button" class="w-8 h-8 rounded bg-slate-800 hover:bg-slate-700 font-bold flex items-center justify-center">+</button>
                                 </div>
                             </div>
 
-                            <span class="text-lg font-black text-slate-600">:</span>
+                            <span class="text-lg font-black text-slate-700">:</span>
 
                             <!-- Czech counter -->
                             <div class="flex flex-col items-center gap-2">
                                 <span class="text-xs font-bold text-blue-400">체코</span>
                                 <div class="flex items-center gap-1 bg-slate-900 border border-slate-800 rounded-lg p-1">
-                                    <button id="btn-score-cze-minus" class="w-8 h-8 rounded bg-slate-800 hover:bg-slate-700 font-bold flex items-center justify-center">-</button>
+                                    <button id="btn-score-cze-minus" type="button" class="w-8 h-8 rounded bg-slate-800 hover:bg-slate-700 font-bold flex items-center justify-center">-</button>
                                     <span id="score-cze-val" class="w-8 text-center text-lg font-black ticket-font">0</span>
-                                    <button id="btn-score-cze-plus" class="w-8 h-8 rounded bg-slate-800 hover:bg-slate-700 font-bold flex items-center justify-center">+</button>
+                                    <button id="btn-score-cze-plus" type="button" class="w-8 h-8 rounded bg-slate-800 hover:bg-slate-700 font-bold flex items-center justify-center">+</button>
                                 </div>
                             </div>
                         </div>
@@ -249,7 +290,7 @@
                             <div class="flex justify-between items-center text-xs text-slate-400 font-semibold mb-2">
                                 <span>최소 100 P</span>
                                 <span id="display-range-value" class="text-emerald-400 text-sm font-bold ticket-font">1,000 P</span>
-                                <span id="display-range-max-label">최대 10,000 P</span>
+                                <span id="display-range-max-label">최대 -- P</span>
                             </div>
                             <input type="range" id="bet-slider" min="100" max="10000" step="100" value="1000"
                                 class="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-emerald-500">
@@ -257,21 +298,21 @@
 
                         <!-- Preset Buttons -->
                         <div class="grid grid-cols-4 gap-2 mb-6">
-                            <button data-action="add" data-val="1000" class="btn-preset py-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-700 text-xs text-slate-300 font-semibold transition active:bg-slate-900">+1,000</button>
-                            <button data-action="add" data-val="5000" class="btn-preset py-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-700 text-xs text-slate-300 font-semibold transition active:bg-slate-900">+5,000</button>
-                            <button data-action="pct" data-val="50" class="btn-preset py-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-700 text-xs text-slate-300 font-semibold transition active:bg-slate-900">50%</button>
-                            <button data-action="max" class="btn-preset py-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-700 text-xs text-slate-300 font-semibold transition active:bg-slate-900 text-emerald-400">ALL-IN</button>
+                            <button data-action="add" data-val="1000" class="btn-preset py-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-750 text-xs text-slate-300 font-semibold transition active:bg-slate-900">+1,000</button>
+                            <button data-action="add" data-val="5000" class="btn-preset py-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-750 text-xs text-slate-300 font-semibold transition active:bg-slate-900">+5,000</button>
+                            <button data-action="pct" data-val="50" class="btn-preset py-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-750 text-xs text-slate-300 font-semibold transition active:bg-slate-900">50%</button>
+                            <button data-action="max" class="btn-preset py-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-750 text-xs text-slate-300 font-semibold transition active:bg-slate-900 text-emerald-400 font-bold">ALL-IN</button>
                         </div>
 
                         <!-- Summary Slip -->
                         <div class="bg-slate-950 p-4 rounded-xl border border-slate-850 flex items-center justify-between mb-4">
                             <div>
                                 <span class="text-xs text-slate-500 block">적중 시 예상 당첨금</span>
-                                <span id="display-payout-money" class="text-lg font-black text-emerald-400 ticket-font">2,100 P</span>
+                                <span id="display-payout-money" class="text-lg font-black text-emerald-400 ticket-font">0 P</span>
                             </div>
                             <div class="text-right">
                                 <span class="text-xs text-slate-500 block">최종 적용 배당</span>
-                                <span id="display-payout-rate" class="text-lg font-bold text-slate-300 ticket-font">2.10 배</span>
+                                <span id="display-payout-rate" class="text-lg font-bold text-slate-300 ticket-font">0.00 배</span>
                             </div>
                         </div>
 
@@ -294,15 +335,15 @@
                             <i data-lucide="receipt" class="w-5 h-5 text-emerald-400"></i>
                             가상 배팅 영수증 보관소
                         </h3>
-                        <span id="ticket-count" class="text-xs bg-slate-950 border border-slate-800 px-2 py-0.5 rounded-md font-bold text-slate-400 ticket-font">0장</span>
+                        <span id="ticket-count" class="text-xs bg-slate-950 border border-slate-850 px-2 py-0.5 rounded-md font-bold text-slate-400 ticket-font">0장</span>
                     </div>
 
                     <!-- Slip list container -->
                     <div id="slips-container" class="flex-grow overflow-y-auto space-y-3 pr-1 text-slate-400 text-sm flex flex-col justify-start">
                         <!-- Empty State -->
                         <div id="slips-empty" class="my-auto text-center flex flex-col items-center justify-center gap-3">
-                            <i data-lucide="sticky-note" class="w-12 h-12 text-slate-700 stroke-1"></i>
-                            <p class="text-slate-500 text-xs">발행된 배팅 티켓이 없습니다.<br>좌측에서 예측을 설정해 발행해 보세요.</p>
+                            <i data-lucide="sticky-note" class="w-12 h-12 text-slate-800 stroke-1"></i>
+                            <p class="text-slate-500 text-xs text-center">발행된 배팅 티켓이 없습니다.<br>좌측에서 예측을 설정해 발행해 보세요.</p>
                         </div>
                     </div>
                 </div>
@@ -314,16 +355,16 @@
                             <i data-lucide="trophy" class="w-5 h-5 text-amber-400"></i>
                             실시간 랭킹 (명예의 전당)
                         </h3>
-                        <span class="text-xs text-slate-500 font-semibold">정시간 동기화</span>
+                        <span class="text-xs text-slate-500 font-semibold">클라우드 갱신</span>
                     </div>
 
                     <!-- Ranking List -->
                     <div id="leaderboard-list" class="flex-grow overflow-y-auto space-y-2 pr-1">
                         <!-- Simulated Loaders -->
                         <div class="animate-pulse space-y-2">
-                            <div class="h-10 bg-slate-950/60 rounded-lg"></div>
-                            <div class="h-10 bg-slate-950/60 rounded-lg"></div>
-                            <div class="h-10 bg-slate-950/60 rounded-lg"></div>
+                            <div class="h-10 bg-slate-950/40 rounded-lg border border-slate-850"></div>
+                            <div class="h-10 bg-slate-950/40 rounded-lg border border-slate-850"></div>
+                            <div class="h-10 bg-slate-950/40 rounded-lg border border-slate-850"></div>
                         </div>
                     </div>
                 </div>
@@ -333,76 +374,543 @@
 
     <!-- FOOTER -->
     <footer class="border-t border-slate-900 bg-slate-950/80 py-4 text-center">
-        <p class="text-xs text-slate-600">본 사이트는 오직 모의 재미 목적의 가상 예측 플랫폼이며 실제 재화, 금전, 사행 행위와 무관합니다.</p>
+        <p class="text-[11px] text-slate-600">본 사이트는 모의 재미 목적의 가상 예측 플랫폼이며 실제 재화, 금전, 사행 행위와 완전히 무관합니다.</p>
     </footer>
 
-    <!-- SETTINGS MODAL (FOR CUSTOM FIREBASE CONFIG) -->
-    <div id="settings-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl relative">
-            <div class="p-6 border-b border-slate-800 flex items-center justify-between">
-                <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                    <i data-lucide="settings-2" class="w-5 h-5 text-emerald-400"></i>
-                    클라우드 멀티플레이 설정 (Firebase)
-                </h3>
-                <button id="btn-close-settings" class="text-slate-400 hover:text-white transition">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
+    <!-- CUSTOM DARK MODAL DIALOG (Replaces basic Browser Alerts/Confirms) -->
+    <div id="custom-dialog" class="hidden fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4 transition-transform transform scale-100">
+            <div class="flex items-center gap-3 text-emerald-400">
+                <i data-lucide="help-circle" class="w-6 h-6 text-emerald-400" id="dialog-icon"></i>
+                <h4 class="text-base font-extrabold text-white" id="dialog-title">알림</h4>
             </div>
-
-            <div class="p-6 space-y-4">
-                <p class="text-xs leading-relaxed text-slate-400">
-                    현재 이 웹페이지는 <strong>로컬 보존형 오프라인 모드(LocalStorage)</strong> 또는 <strong>공용 샌드박스 데이터베이스</strong>로 안전하게 보호되고 있습니다.<br>
-                    깃허브 Pages 등 외부에서 친구들과 함께 접속하고 전용 글로벌 랭킹을 구현하려면 본인의 파이어베이스(Firebase) 설정 정보를 입력해 즉시 연동하세요.
-                </p>
-
-                <div class="space-y-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 mb-1">앱 아이디 (App ID)</label>
-                        <input type="text" id="cfg-app-id" placeholder="예: world-cup-toto" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-white placeholder-slate-700">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 mb-1">Firebase SDK 구성 정보 (JSON 포맷)</label>
-                        <textarea id="cfg-json" rows="6" placeholder='{ "apiKey": "AIzaSy...", "authDomain": "...", "projectId": "..." }' class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-white font-mono placeholder-slate-700"></textarea>
-                    </div>
-                </div>
-
-                <div class="bg-slate-950 p-3 rounded-lg flex items-start gap-2 border border-slate-850">
-                    <i data-lucide="info" class="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5"></i>
-                    <p class="text-[11px] text-slate-400">설정을 비우고 적용하면 자동으로 즉시 오프라인 안전 보존 모드로 복귀합니다.</p>
-                </div>
-            </div>
-
-            <div class="p-4 bg-slate-950 border-t border-slate-800/80 flex items-center justify-end gap-2">
-                <button id="btn-reset-cfg" class="px-4 py-2 bg-slate-900 border border-slate-800 text-xs text-rose-400 hover:bg-slate-800 transition rounded-lg font-bold">기본값 리셋</button>
-                <button id="btn-save-cfg" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs transition rounded-lg font-bold">새 설정 적용</button>
+            <p class="text-sm text-slate-300 leading-relaxed" id="dialog-message">메시지 내용</p>
+            <div class="flex items-center justify-end gap-2 pt-2" id="dialog-actions">
+                <button id="dialog-btn-cancel" class="px-4 py-2 bg-slate-950 border border-slate-800 hover:bg-slate-800 rounded-lg text-xs font-bold text-slate-400 transition">취소</button>
+                <button id="dialog-btn-confirm" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-lg text-xs font-bold transition">확인</button>
             </div>
         </div>
     </div>
 
-    <!-- CORE LOGIC / FIREBASE DECOUPLING SCRIPT -->
+    <!-- CORE INTEGRATED SCRIPT -->
     <script type="module">
-        // Firebase modules import
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, query, onSnapshot, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // APP STATE
-        let currentUser = null;
+        // =========================================================================
+        // ⚙️ [필수 구성] 깃허브 배포 시 친구들과 항상 동일한 파이어베이스 DB를 유지하려면
+        // 아래 괄호 내에 본인의 Firebase 정보를 작성해 두세요! 
+        // 미기입 시 첫 실행 시에 화면 상에서 사용자가 직접 등록할 수 있는 패널이 나타납니다.
+        // =========================================================================
+        const myFirebaseConfig = {
+            apiKey: "AIzaSyBiiIRKd3QOI0AGedlDxjhuUTQH4UsRTB0",
+            authDomain: "funproject-5ebfc.firebaseapp.com",
+            projectId: "funproject-5ebfc",
+            storageBucket: "funproject-5ebfc.firebasestorage.app",
+            messagingSenderId: "22039341965",
+            appId: "1:22039341965:web:13b1edbb51693086316bc4"
+        };
+        const defaultAppId = "fun-toto-2026";
+
+        // Global States
         let isFirebaseActive = false;
-        let appId = "fun-toto-sandbox";
         let db = null;
         let auth = null;
+        let appId = defaultAppId;
+        let currentUser = null; // Authed User object
 
-        // User Data State
-        let localUser = {
+        // Reactive User State (Fetched entirely from Firestore Document)
+        let userProfile = {
             uid: "",
             username: "",
             points: 10000,
-            updatedAt: Date.now()
+            updatedAt: 0
         };
         let activeTickets = [];
 
-        // Dynamic Score Odds Table Matrix
+        // Active selection
+        let selectedBet = {
+            type: "1x2",
+            pick: "",
+            odds: 0.00
+        };
+
+        // UI Counter variables
+        let scoreKOR = 0;
+        let scoreCZE = 0;
+
+        // Elements
+        const connectionLoader = document.getElementById('connection-loader');
+        const firebaseSetupContainer = document.getElementById('firebase-setup-container');
+        const loginContainer = document.getElementById('login-container');
+        const lobbyContainer = document.getElementById('lobby-container');
+        const headerUserPanel = document.getElementById('header-user-panel');
+        const loginForm = document.getElementById('login-form');
+        const usernameInput = document.getElementById('username');
+        const headerUsername = document.getElementById('header-username');
+        const headerBalance = document.getElementById('header-balance');
+        const dbStatusDot = document.getElementById('db-status-dot');
+        const dbStatusText = document.getElementById('db-status-text');
+        const btnResetPoints = document.getElementById('btn-reset-points');
+        const dbStatusBtn = document.getElementById('db-status-btn');
+
+        // Betting Setup Forms & Buttons
+        const tab1x2 = document.getElementById('tab-1x2');
+        const tabScore = document.getElementById('tab-score');
+        const pane1x2 = document.getElementById('pane-1x2');
+        const paneScore = document.getElementById('pane-score');
+        const displaySelectedTarget = document.getElementById('display-selected-target');
+        const betSlider = document.getElementById('bet-slider');
+        const displayRangeValue = document.getElementById('display-range-value');
+        const displayRangeMaxLabel = document.getElementById('display-range-max-label');
+        const displayPayoutMoney = document.getElementById('display-payout-money');
+        const displayPayoutRate = document.getElementById('display-payout-rate');
+        const btnSubmitBet = document.getElementById('btn-submit-bet');
+        const slipsContainer = document.getElementById('slips-container');
+        const slipsEmpty = document.getElementById('slips-empty');
+        const ticketCountLabel = document.getElementById('ticket-count');
+        const leaderboardList = document.getElementById('leaderboard-list');
+
+        // Score Elements
+        const btnScoreKorMinus = document.getElementById('btn-score-kor-minus');
+        const btnScoreKorPlus = document.getElementById('btn-score-kor-plus');
+        const scoreKorVal = document.getElementById('score-kor-val');
+        const btnScoreCzeMinus = document.getElementById('btn-score-cze-minus');
+        const btnScoreCzePlus = document.getElementById('btn-score-cze-plus');
+        const scoreCzeVal = document.getElementById('score-cze-val');
+        const scoreCalculatedOdds = document.getElementById('score-calculated-odds');
+        const btnLockScore = document.getElementById('btn-lock-score');
+
+        // Custom Modal Elements
+        const customDialog = document.getElementById('custom-dialog');
+        const dialogTitle = document.getElementById('dialog-title');
+        const dialogMessage = document.getElementById('dialog-message');
+        const dialogBtnCancel = document.getElementById('dialog-btn-cancel');
+        const dialogBtnConfirm = document.getElementById('dialog-btn-confirm');
+        const dialogIcon = document.getElementById('dialog-icon');
+
+        lucide.createIcons();
+
+        // Safe Custom UI Modal (Promise-based Alert/Confirm replacement)
+        function showCustomDialog({ title, message, isConfirm = false, icon = "info" }) {
+            return new Promise((resolve) => {
+                dialogTitle.innerText = title;
+                dialogMessage.innerText = message;
+                
+                // Set Icon
+                dialogIcon.setAttribute('data-lucide', icon);
+                lucide.createIcons();
+
+                if (isConfirm) {
+                    dialogBtnCancel.classList.remove('hidden');
+                } else {
+                    dialogBtnCancel.classList.add('hidden');
+                }
+
+                customDialog.classList.remove('hidden');
+
+                const handleConfirm = () => {
+                    cleanup();
+                    resolve(true);
+                };
+
+                const handleCancel = () => {
+                    cleanup();
+                    resolve(false);
+                };
+
+                const cleanup = () => {
+                    customDialog.classList.add('hidden');
+                    dialogBtnConfirm.removeEventListener('click', handleConfirm);
+                    dialogBtnCancel.removeEventListener('click', handleCancel);
+                };
+
+                dialogBtnConfirm.addEventListener('click', handleConfirm);
+                dialogBtnCancel.addEventListener('click', handleCancel);
+            });
+        }
+
+        // Initialize Firebase strictly following Rule 3
+        async function bootPlatform() {
+            let config = null;
+
+            // 1. Look for custom setting inside localStorage (saved via form)
+            const localStoredCfg = localStorage.getItem('sim_strict_fb_config');
+            const localStoredAppId = localStorage.getItem('sim_strict_fb_appid');
+            if (localStoredCfg && localStoredAppId) {
+                try {
+                    config = JSON.parse(localStoredCfg);
+                    appId = localStoredAppId;
+                } catch(e) {
+                    console.error("저장된 Custom JSON 파싱에 실패했습니다.");
+                }
+            }
+
+            // 2. Look for injected platform variables
+            if (!config) {
+                try {
+                    if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                        config = JSON.parse(__firebase_config);
+                        appId = typeof __app_id !== 'undefined' ? __app_id : defaultAppId;
+                    }
+                } catch(e) {}
+            }
+
+            // 3. Look for hardcoded variables
+            if (!config && myFirebaseConfig.apiKey) {
+                config = myFirebaseConfig;
+                appId = myAppId || defaultAppId;
+            }
+
+            // If no configuration is active, enforce the user to supply one
+            if (!config) {
+                connectionLoader.classList.add('hidden');
+                firebaseSetupContainer.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                // Initialize services
+                const app = initializeApp(config);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                // RULE 3 - Authenticate BEFORE queries
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                // Listen to Auth State
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        currentUser = user;
+                        isFirebaseActive = true;
+                        
+                        dbStatusDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
+                        dbStatusText.innerText = "클라우드 정상가동";
+
+                        await checkUserProfileAndDirect();
+                    } else {
+                        currentUser = null;
+                        isFirebaseActive = false;
+                        showScreen(loginContainer);
+                    }
+                });
+
+            } catch (err) {
+                console.error("Firebase Connection Error", err);
+                connectionLoader.classList.add('hidden');
+                await showCustomDialog({
+                    title: "서버 연결 오류",
+                    message: "파이어베이스 클라우드 연결에 실패했습니다. 입력한 구성 키 정보와 네트워크 환경을 다시 확인해 주세요.",
+                    icon: "wifi-off"
+                });
+                // Open setup panel
+                firebaseSetupContainer.classList.remove('hidden');
+            }
+        }
+
+        // Firebase Custom Configuration Setup handler
+        document.getElementById('setup-keys-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const appIdVal = document.getElementById('setup-app-id').value.trim();
+            const jsonVal = document.getElementById('setup-json-config').value.trim();
+
+            try {
+                JSON.parse(jsonVal);
+                localStorage.setItem('sim_strict_fb_config', jsonVal);
+                localStorage.setItem('sim_strict_fb_appid', appIdVal);
+                window.location.reload();
+            } catch(e) {
+                showCustomDialog({
+                    title: "양식 오류",
+                    message: "입력된 구성 정보가 올바른 JSON 포맷이 아닙니다. 정확하게 복사-붙여넣기 했는지 체크해 주세요.",
+                    icon: "alert-triangle"
+                });
+            }
+        });
+
+        // Safe Screen Router
+        function showScreen(container) {
+            connectionLoader.classList.add('hidden');
+            firebaseSetupContainer.classList.add('hidden');
+            loginContainer.classList.add('hidden');
+            lobbyContainer.classList.add('hidden');
+
+            container.classList.remove('hidden');
+        }
+
+        // Check user profiles inside Firestore strictly
+        async function checkUserProfileAndDirect() {
+            if (!currentUser) return;
+
+            try {
+                // RULE 1: Profile Document is stored in users private folder
+                const profileRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'main');
+                const profileSnap = await getDoc(profileRef);
+
+                if (profileSnap.exists()) {
+                    userProfile = {
+                        uid: currentUser.uid,
+                        ...profileSnap.data()
+                    };
+                    enterLobby();
+                } else {
+                    // Profile does not exist yet -> trigger username setup onboarding screen
+                    showScreen(loginContainer);
+                }
+            } catch (err) {
+                console.error("Profile check error:", err);
+                showScreen(loginContainer);
+            }
+        }
+
+        // Onboarding Login form submit
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = usernameInput.value.trim();
+            if (!name || !currentUser) return;
+
+            try {
+                // RULE 1: Set user private profile document in Firestore
+                const profileRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'main');
+                const initialProfile = {
+                    username: name,
+                    points: 10000,
+                    updatedAt: Date.now()
+                };
+                await setDoc(profileRef, initialProfile);
+
+                // RULE 1: Set public ranking record for global list (allows search & display without listing private directories)
+                const rankingRef = doc(db, 'artifacts', appId, 'public', 'data', 'rankings', currentUser.uid);
+                await setDoc(rankingRef, {
+                    username: name,
+                    totalPoints: 10000,
+                    updatedAt: Date.now()
+                });
+
+                userProfile = {
+                    uid: currentUser.uid,
+                    ...initialProfile
+                };
+
+                enterLobby();
+            } catch (err) {
+                console.error("가입 중 오류가 발생했습니다:", err);
+                await showCustomDialog({
+                    title: "프로필 등록 실패",
+                    message: "클라우드 서버에 사용자 데이터를 저장하지 못했습니다. Firebase 데이터베이스 보안 규칙(Rule) 설정을 점검하세요.",
+                    icon: "shield-alert"
+                });
+            }
+        });
+
+        // Initialize Lobby Dashboard
+        async function enterLobby() {
+            headerUsername.innerText = userProfile.username;
+            headerBalance.innerText = `${userProfile.points.toLocaleString()} P`;
+
+            showScreen(lobbyContainer);
+            headerUserPanel.classList.remove('hidden');
+
+            // Start Realtime listeners for Active Tickets & Rankings
+            startUserTicketsListener();
+            startGlobalLeaderboardListener();
+            updateBettingConsoleUI();
+        }
+
+        // Realtime Bet Slips Loader (RULE 1 & 3)
+        let unsubscribeTickets = null;
+        function startUserTicketsListener() {
+            if (!currentUser) return;
+
+            // RULE 1: Fetch from /artifacts/{appId}/users/{userId}/tickets
+            const ticketsCol = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'tickets');
+            
+            unsubscribeTickets = onSnapshot(ticketsCol, (snapshot) => {
+                activeTickets = [];
+                snapshot.forEach((docSnap) => {
+                    activeTickets.push({
+                        id: docSnap.id,
+                        ...docSnap.data()
+                    });
+                });
+                
+                // Sort by newest
+                activeTickets.sort((a, b) => b.createdAt - a.createdAt);
+                renderUserTickets();
+                updateBettingConsoleUI();
+            }, (error) => {
+                console.error("티켓 동기화 실패:", error);
+            });
+        }
+
+        // Realtime Leaderboard Loader (RULE 1, 2 & 3)
+        let unsubscribeRankings = null;
+        function startGlobalLeaderboardListener() {
+            if (!currentUser) return;
+
+            // RULE 1: Fetch from public path
+            const rankingsCol = collection(db, 'artifacts', appId, 'public', 'data', 'rankings');
+            
+            // RULE 2: No complex queries used, sort in browser memory
+            unsubscribeRankings = onSnapshot(rankingsCol, (snapshot) => {
+                const rawRankings = [];
+                snapshot.forEach((docSnap) => {
+                    rawRankings.push({
+                        id: docSnap.id,
+                        ...docSnap.data()
+                    });
+                });
+
+                // Sort by total points in memory
+                rawRankings.sort((a, b) => b.totalPoints - a.totalPoints);
+                renderLeaderboard(rawRankings);
+            }, (error) => {
+                console.error("랭킹 동기화 실패:", error);
+            });
+        }
+
+        // Render user bet slips
+        function renderUserTickets() {
+            ticketCountLabel.innerText = `${activeTickets.length}장`;
+
+            if (activeTickets.length === 0) {
+                slipsEmpty.classList.remove('hidden');
+                const dynamicItems = slipsContainer.querySelectorAll('.dynamic-ticket');
+                dynamicItems.forEach(item => item.remove());
+                return;
+            }
+
+            slipsEmpty.classList.add('hidden');
+            const dynamicItems = slipsContainer.querySelectorAll('.dynamic-ticket');
+            dynamicItems.forEach(item => item.remove());
+
+            activeTickets.forEach(ticket => {
+                const el = document.createElement('div');
+                el.className = "dynamic-ticket bg-slate-950 border border-slate-850 rounded-xl p-4 relative overflow-hidden transition hover:border-slate-800 shadow-md";
+                
+                const estPayout = Math.floor(ticket.amount * ticket.odds);
+                
+                el.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[10px] text-emerald-400 font-extrabold tracking-widest ticket-font uppercase">ACTIVE TICKET</span>
+                        <span class="text-[10px] text-slate-500 ticket-font">${ticket.id}</span>
+                    </div>
+
+                    <p class="text-xs font-extrabold text-white mb-2 leading-snug">${ticket.pick}</p>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs border-t border-slate-900 pt-2.5 mb-3">
+                        <div>
+                            <span class="text-[10px] text-slate-500 block">가상 예측금</span>
+                            <span class="font-semibold text-slate-300 ticket-font">${ticket.amount.toLocaleString()} P</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] text-slate-500 block">예상 당첨금</span>
+                            <span class="font-extrabold text-emerald-400 ticket-font">${estPayout.toLocaleString()} P</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-2">
+                        <button onclick="copyTicket('${ticket.id}')" class="flex-1 py-1.5 px-2 bg-slate-900 border border-slate-800 hover:border-slate-700 hover:bg-slate-850 transition rounded-lg text-[11px] text-slate-400 hover:text-white font-semibold flex items-center justify-center gap-1">
+                            <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+                            영수증 복사
+                        </button>
+                        <button onclick="refundTicket('${ticket.id}')" class="py-1.5 px-3 bg-rose-500/10 border border-rose-500/20 hover:border-rose-500/20 transition rounded-lg text-[11px] text-rose-400 font-semibold flex items-center justify-center gap-1">
+                            <i data-lucide="undo" class="w-3.5 h-3.5"></i>
+                            철회
+                        </button>
+                    </div>
+
+                    <!-- decorative structural barcode -->
+                    <div class="mt-3 pt-2 border-t border-dashed border-slate-850 flex flex-col items-center justify-center opacity-30">
+                        <div class="h-6 w-full bg-[linear-gradient(90deg,#fff_2px,transparent_2px,#fff_4px,transparent_8px,#fff_10px,transparent_11px,#fff_15px,transparent_17px,#fff_21px,transparent_22px)] opacity-25"></div>
+                        <span class="text-[8px] text-slate-500 ticket-font mt-1">VERIFICATION CLOUD SECURE: ${ticket.id}</span>
+                    </div>
+                `;
+                slipsContainer.appendChild(el);
+            });
+
+            lucide.createIcons();
+        }
+
+        // Render rankings
+        function renderLeaderboard(rankings) {
+            leaderboardList.innerHTML = "";
+
+            if (rankings.length === 0) {
+                leaderboardList.innerHTML = `<p class="text-center text-xs text-slate-650 my-10">참가한 베터 정보가 없습니다.</p>`;
+                return;
+            }
+
+            rankings.slice(0, 20).forEach((item, index) => {
+                const rank = index + 1;
+                let rankStyle = "bg-slate-950 text-slate-500 border border-slate-850";
+                if (rank === 1) rankStyle = "bg-amber-500/10 border border-amber-500/30 text-amber-400 font-black";
+                else if (rank === 2) rankStyle = "bg-slate-300/10 border border-slate-300/30 text-slate-300 font-black";
+                else if (rank === 3) rankStyle = "bg-amber-700/10 border border-amber-700/30 text-amber-600 font-black";
+
+                const isMe = item.id === currentUser.uid;
+                const el = document.createElement('div');
+                el.className = `p-3 rounded-xl flex items-center justify-between border transition ${isMe ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-slate-950/20 border-slate-900'}`;
+                
+                el.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-lg flex items-center justify-center text-xs ticket-font ${rankStyle}">${rank}</span>
+                        <span class="text-xs font-bold text-slate-200 flex items-center gap-1">
+                            ${item.username}
+                            ${isMe ? '<span class="text-[9px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded-full">나</span>' : ''}
+                        </span>
+                    </div>
+                    <span class="text-xs font-black text-slate-300 ticket-font">${item.totalPoints.toLocaleString()} P</span>
+                `;
+                leaderboardList.appendChild(el);
+            });
+        }
+
+        // Action controllers
+        tab1x2.addEventListener('click', () => {
+            tab1x2.className = "py-2.5 px-4 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 bg-slate-800 text-white";
+            tabScore.className = "py-2.5 px-4 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white";
+            pane1x2.classList.remove('hidden');
+            paneScore.classList.add('hidden');
+            resetActiveSelection();
+        });
+
+        tabScore.addEventListener('click', () => {
+            tabScore.className = "py-2.5 px-4 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 bg-slate-800 text-white";
+            tab1x2.className = "py-2.5 px-4 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white";
+            paneScore.classList.remove('hidden');
+            pane1x2.classList.add('hidden');
+            resetActiveSelection();
+        });
+
+        // 1X2 Button picks
+        document.querySelectorAll('.option-btn[data-type="1x2"]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.option-btn[data-type="1x2"]').forEach(b => b.classList.remove('border-emerald-500', 'bg-emerald-500/10'));
+                btn.classList.add('border-emerald-500', 'bg-emerald-500/10');
+                
+                const pick = btn.getAttribute('data-pick');
+                let pickLabel = "";
+                let odds = 0.00;
+
+                if (pick === "KOR") { pickLabel = "대한민국 승"; odds = 2.10; }
+                else if (pick === "DRAW") { pickLabel = "무승부"; odds = 3.40; }
+                else if (pick === "CZE") { pickLabel = "체코 승"; odds = 2.85; }
+
+                selectedBet.type = "1x2";
+                selectedBet.pick = pickLabel;
+                selectedBet.odds = odds;
+
+                updateBettingConsoleUI();
+            });
+        });
+
+        // Score matrix calculator
         function calculateScoreOdds(kor, cze) {
             if (kor === 1 && cze === 1) return 6.50;
             if (kor === 1 && cze === 0) return 7.20;
@@ -425,268 +933,10 @@
             return Math.min(150.0, parseFloat(base.toFixed(2)));
         }
 
-        // Active selection
-        let selectedBet = {
-            type: "1x2", // "1x2" or "score"
-            pick: "",    // "KOR", "DRAW", "CZE" or "2:1" style
-            odds: 0.00
-        };
-
-        // Firebase Initialization Block
-        async function setupFirebase() {
-            let firebaseConfig = null;
-
-            // 1. Check if user configured their own custom Database
-            const savedConfig = localStorage.getItem('custom_fb_config');
-            const savedAppId = localStorage.getItem('custom_fb_appid');
-            if (savedConfig && savedAppId) {
-                try {
-                    firebaseConfig = JSON.parse(savedConfig);
-                    appId = savedAppId;
-                } catch(e) {
-                    console.error("저장된 Firebase JSON 설정 포맷이 다릅니다.");
-                }
-            }
-
-            // 2. Try falling back to system injected keys inside sandbox preview
-            if (!firebaseConfig) {
-                try {
-                    if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-                        firebaseConfig = JSON.parse(__firebase_config);
-                        appId = typeof __app_id !== 'undefined' ? __app_id : 'fun-toto-sandbox';
-                    }
-                } catch(e) {
-                    console.log("플랫폼 기본 샌드박스 변수 로딩 미대상");
-                }
-            }
-
-            // 3. Perform initialization if configuration is valid
-            if (firebaseConfig) {
-                try {
-                    const app = initializeApp(firebaseConfig);
-                    auth = getAuth(app);
-                    db = getFirestore(app);
-
-                    // Authentication Step (RULE 3)
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-
-                    isFirebaseActive = true;
-                    updateDBStatusIndicator(true, false);
-                } catch(err) {
-                    console.warn("데이터베이스 접속이 일시 실패했습니다. 로컬 세이브로 안전하게 연동 전환됩니다.", err);
-                    isFirebaseActive = false;
-                    updateDBStatusIndicator(false, true);
-                }
-            } else {
-                isFirebaseActive = false;
-                updateDBStatusIndicator(false, false);
-            }
-        }
-
-        // DOM Elements
-        const loginContainer = document.getElementById('login-container');
-        const lobbyContainer = document.getElementById('lobby-container');
-        const headerUserPanel = document.getElementById('header-user-panel');
-        const loginForm = document.getElementById('login-form');
-        const usernameInput = document.getElementById('username');
-        const headerUsername = document.getElementById('header-username');
-        const headerBalance = document.getElementById('header-balance');
-        const dbStatusDot = document.getElementById('db-status-dot');
-        const dbStatusText = document.getElementById('db-status-text');
-        const btnResetPoints = document.getElementById('btn-reset-points');
-        const dbStatusBtn = document.getElementById('db-status-btn');
-
-        // Modal Elements
-        const settingsModal = document.getElementById('settings-modal');
-        const btnCloseSettings = document.getElementById('btn-close-settings');
-        const btnSaveCfg = document.getElementById('btn-save-cfg');
-        const btnResetCfg = document.getElementById('btn-reset-cfg');
-        const cfgAppIdInput = document.getElementById('cfg-app-id');
-        const cfgJsonArea = document.getElementById('cfg-json');
-
-        // Betting Controls
-        const tab1x2 = document.getElementById('tab-1x2');
-        const tabScore = document.getElementById('tab-score');
-        const pane1x2 = document.getElementById('pane-1x2');
-        const paneScore = document.getElementById('pane-score');
-        const displaySelectedTarget = document.getElementById('display-selected-target');
-        const betSlider = document.getElementById('bet-slider');
-        const displayRangeValue = document.getElementById('display-range-value');
-        const displayRangeMaxLabel = document.getElementById('display-range-max-label');
-        const displayPayoutMoney = document.getElementById('display-payout-money');
-        const displayPayoutRate = document.getElementById('display-payout-rate');
-        const btnSubmitBet = document.getElementById('btn-submit-bet');
-        const slipsContainer = document.getElementById('slips-container');
-        const slipsEmpty = document.getElementById('slips-empty');
-        const ticketCountLabel = document.getElementById('ticket-count');
-        const leaderboardList = document.getElementById('leaderboard-list');
-
-        // Score Panel Controls
-        const btnScoreKorMinus = document.getElementById('btn-score-kor-minus');
-        const btnScoreKorPlus = document.getElementById('btn-score-kor-plus');
-        const scoreKorVal = document.getElementById('score-kor-val');
-        const btnScoreCzeMinus = document.getElementById('btn-score-cze-minus');
-        const btnScoreCzePlus = document.getElementById('btn-score-cze-plus');
-        const scoreCzeVal = document.getElementById('score-cze-val');
-        const scoreCalculatedOdds = document.getElementById('score-calculated-odds');
-        const btnLockScore = document.getElementById('btn-lock-score');
-
-        let scoreKOR = 0;
-        let scoreCZE = 0;
-
-        // Initialize Lucide icons
-        lucide.createIcons();
-
-        // Database indicator status renderer
-        function updateDBStatusIndicator(active, fallbackOccurred) {
-            if (active) {
-                dbStatusDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
-                dbStatusText.innerText = "클라우드 온라인";
-            } else {
-                dbStatusDot.className = "w-2.5 h-2.5 rounded-full bg-amber-400";
-                dbStatusText.innerText = fallbackOccurred ? "연결지연 (로컬보존)" : "로컬 보존";
-            }
-        }
-
-        // Core App Lifecycle Setup
-        window.addEventListener('DOMContentLoaded', async () => {
-            await setupFirebase();
-
-            // Load local identity key or create if missing
-            let storedUid = localStorage.getItem('sim_user_uid');
-            if (!storedUid) {
-                storedUid = 'user_' + Math.random().toString(36).substr(2, 9);
-                localStorage.setItem('sim_user_uid', storedUid);
-            }
-            localUser.uid = storedUid;
-
-            // Check if user is already logged in
-            const storedName = localStorage.getItem('sim_user_name');
-            if (storedName) {
-                localUser.username = storedName;
-                localUser.points = parseInt(localStorage.getItem('sim_user_points') || '10000');
-                showLobby();
-            }
-
-            // Sync Settings UI fields
-            cfgAppIdInput.value = localStorage.getItem('custom_fb_appid') || '';
-            cfgJsonArea.value = localStorage.getItem('custom_fb_config') || '';
-        });
-
-        // Setup Panel Open Close
-        dbStatusBtn.addEventListener('click', () => {
-            settingsModal.classList.remove('hidden');
-        });
-        btnCloseSettings.addEventListener('click', () => {
-            settingsModal.classList.add('hidden');
-        });
-        btnResetCfg.addEventListener('click', () => {
-            localStorage.removeItem('custom_fb_config');
-            localStorage.removeItem('custom_fb_appid');
-            alert('설정값이 공용 모드로 초기화되었습니다. 페이지가 새로고침됩니다.');
-            window.location.reload();
-        });
-        btnSaveCfg.addEventListener('click', () => {
-            const appIdVal = cfgAppIdInput.value.trim();
-            const jsonVal = cfgJsonArea.value.trim();
-
-            if (jsonVal && !appIdVal) {
-                alert('App ID를 입력해 주세요.');
-                return;
-            }
-
-            if (jsonVal) {
-                try {
-                    JSON.parse(jsonVal);
-                } catch(e) {
-                    alert('파이어베이스 구성 데이터 양식이 올바른 JSON이 아닙니다.');
-                    return;
-                }
-                localStorage.setItem('custom_fb_config', jsonVal);
-                localStorage.setItem('custom_fb_appid', appIdVal);
-            } else {
-                localStorage.removeItem('custom_fb_config');
-                localStorage.removeItem('custom_fb_appid');
-            }
-
-            alert('새로운 연결 설정이 저장되었습니다. 페이지가 리로드됩니다.');
-            window.location.reload();
-        });
-
-        // Form Submission (Login Screen)
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = usernameInput.value.trim();
-            if (!name) return;
-
-            localUser.username = name;
-            localUser.points = 10000;
-            localUser.updatedAt = Date.now();
-
-            localStorage.setItem('sim_user_name', name);
-            localStorage.setItem('sim_user_points', '10000');
-
-            showLobby();
-        });
-
-        // Point recovery system
-        btnResetPoints.addEventListener('click', async () => {
-            if (confirm("배팅용 소지 금액을 10,000 P로 원격 충전하시겠습니까? (현재 소유 중인 예측 티켓은 소멸되지 않습니다)")) {
-                localUser.points = 10000;
-                await syncUserData();
-                updateUI();
-                alert("포인트 10,000 P가 무료 충전되었습니다!");
-            }
-        });
-
-        // Tab switches
-        tab1x2.addEventListener('click', () => {
-            tab1x2.className = "py-2.5 px-4 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 bg-slate-800 text-white";
-            tabScore.className = "py-2.5 px-4 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white";
-            pane1x2.classList.remove('hidden');
-            paneScore.classList.add('hidden');
-            resetActiveSelection();
-        });
-
-        tabScore.addEventListener('click', () => {
-            tabScore.className = "py-2.5 px-4 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 bg-slate-800 text-white";
-            tab1x2.className = "py-2.5 px-4 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white";
-            paneScore.classList.remove('hidden');
-            pane1x2.classList.add('hidden');
-            resetActiveSelection();
-        });
-
-        // 1X2 Card Button Selection listener
-        document.querySelectorAll('.option-btn[data-type="1x2"]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.option-btn[data-type="1x2"]').forEach(b => b.classList.remove('border-emerald-500', 'bg-emerald-500/10'));
-                btn.classList.add('border-emerald-500', 'bg-emerald-500/10');
-                
-                const pick = btn.getAttribute('data-pick');
-                let pickLabel = "";
-                let odds = 0.00;
-
-                if (pick === "KOR") { pickLabel = "대한민국 승"; odds = 2.10; }
-                else if (pick === "DRAW") { pickLabel = "무승부"; odds = 3.40; }
-                else if (pick === "CZE") { pickLabel = "체코 승"; odds = 2.85; }
-
-                selectedBet.type = "1x2";
-                selectedBet.pick = pickLabel;
-                selectedBet.odds = odds;
-
-                updateSelectionDisplay();
-            });
-        });
-
-        // Score minus plus buttons
-        btnScoreKorMinus.addEventListener('click', () => { if (scoreKOR > 0) scoreKOR--; updateScoreCounterUI(); });
-        btnScoreKorPlus.addEventListener('click', () => { if (scoreKOR < 9) scoreKOR++; updateScoreCounterUI(); });
-        btnScoreCzeMinus.addEventListener('click', () => { if (scoreCZE > 0) scoreCZE--; updateScoreCounterUI(); });
-        btnScoreCzePlus.addEventListener('click', () => { if (scoreCZE < 9) scoreCZE++; updateScoreCounterUI(); });
+        btnScoreKorMinus.addEventListener('click', () => { if (scoreKOR > 0) { scoreKOR--; updateScoreCounterUI(); } });
+        btnScoreKorPlus.addEventListener('click', () => { if (scoreKOR < 9) { scoreKOR++; updateScoreCounterUI(); } });
+        btnScoreCzeMinus.addEventListener('click', () => { if (scoreCZE > 0) { scoreCZE--; updateScoreCounterUI(); } });
+        btnScoreCzePlus.addEventListener('click', () => { if (scoreCZE < 9) { scoreCZE++; updateScoreCounterUI(); } });
 
         function updateScoreCounterUI() {
             scoreKorVal.innerText = scoreKOR;
@@ -701,13 +951,12 @@
             selectedBet.pick = `정확한 스코어 [대한민국 ${scoreKOR} : ${scoreCZE} 체코]`;
             selectedBet.odds = odds;
 
-            updateSelectionDisplay();
+            updateBettingConsoleUI();
             
-            // Highlight button temporarily
             btnLockScore.classList.add('border-emerald-500', 'bg-emerald-500/10');
             setTimeout(() => {
                 btnLockScore.classList.remove('border-emerald-500', 'bg-emerald-500/10');
-            }, 800);
+            }, 500);
         });
 
         function resetActiveSelection() {
@@ -715,167 +964,92 @@
             selectedBet.pick = "";
             selectedBet.odds = 0.00;
             document.querySelectorAll('.option-btn[data-type="1x2"]').forEach(b => b.classList.remove('border-emerald-500', 'bg-emerald-500/10'));
-            updateSelectionDisplay();
+            updateBettingConsoleUI();
         }
 
-        // Amount slider listener
         betSlider.addEventListener('input', () => {
-            updateSelectionDisplay();
+            updateBettingConsoleUI();
         });
 
-        // Presets logic
+        // Preset quick configuration buttons
         document.querySelectorAll('.btn-preset').forEach(btn => {
             btn.addEventListener('click', () => {
                 const action = btn.getAttribute('data-action');
-                let currentSliderVal = parseInt(betSlider.value);
+                let currentVal = parseInt(betSlider.value);
 
                 if (action === "add") {
                     const val = parseInt(btn.getAttribute('data-val'));
-                    betSlider.value = Math.min(localUser.points, currentSliderVal + val);
+                    betSlider.value = Math.min(userProfile.points, currentVal + val);
                 } else if (action === "pct") {
                     const pct = parseInt(btn.getAttribute('data-val')) / 100;
-                    betSlider.value = Math.max(100, Math.floor(localUser.points * pct));
+                    betSlider.value = Math.max(100, Math.floor(userProfile.points * pct));
                 } else if (action === "max") {
-                    betSlider.value = localUser.points;
+                    betSlider.value = userProfile.points;
                 }
 
-                updateSelectionDisplay();
+                updateBettingConsoleUI();
             });
         });
 
-        function updateSelectionDisplay() {
-            // Cap slider max to current user points
-            const currentPoints = localUser.points;
+        // Compute layout values based on react states
+        function updateBettingConsoleUI() {
+            const currentPoints = userProfile.points;
             betSlider.max = Math.max(100, currentPoints);
             displayRangeMaxLabel.innerText = `최대 ${currentPoints.toLocaleString()} P`;
 
-            let betValue = parseInt(betSlider.value);
-            if (betValue > currentPoints) {
-                betValue = currentPoints;
+            let betAmount = parseInt(betSlider.value);
+            if (betAmount > currentPoints) {
+                betAmount = currentPoints;
                 betSlider.value = currentPoints;
             }
 
-            displayRangeValue.innerText = `${betValue.toLocaleString()} P`;
+            displayRangeValue.innerText = `${betAmount.toLocaleString()} P`;
 
             if (!selectedBet.pick) {
                 displaySelectedTarget.innerText = "선택된 예측 항목이 없습니다.";
                 displayPayoutMoney.innerText = "0 P";
                 displayPayoutRate.innerText = "0.00 배";
                 btnSubmitBet.disabled = true;
-                btnSubmitBet.className = "w-full py-4 rounded-xl bg-slate-800 text-slate-500 cursor-not-allowed font-black text-lg flex items-center justify-center gap-2";
+                btnSubmitBet.className = "w-full py-4 rounded-xl bg-slate-950 text-slate-650 cursor-not-allowed font-black text-lg flex items-center justify-center gap-2 border border-slate-900";
                 return;
             }
 
             btnSubmitBet.disabled = false;
-            btnSubmitBet.className = "w-full py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-lg flex items-center justify-center gap-2 transition transform active:scale-[0.98] cursor-pointer shadow-lg shadow-emerald-500/10";
+            btnSubmitBet.className = "w-full py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-lg flex items-center justify-center gap-2 transition transform active:scale-[0.98] shadow-lg shadow-emerald-500/15 cursor-pointer";
 
             displaySelectedTarget.innerText = `${selectedBet.pick} (${selectedBet.odds.toFixed(2)}배)`;
             
-            const estPayout = Math.floor(betValue * selectedBet.odds);
-            displayPayoutMoney.innerText = `${estPayout.toLocaleString()} P`;
+            const payout = Math.floor(betAmount * selectedBet.odds);
+            displayPayoutMoney.innerText = `${payout.toLocaleString()} P`;
             displayPayoutRate.innerText = `${selectedBet.odds.toFixed(2)} 배`;
         }
 
-        // Show Lobby and Load Data
-        async function showLobby() {
-            loginContainer.classList.add('hidden');
-            lobbyContainer.classList.remove('hidden');
-            headerUserPanel.classList.remove('hidden');
-
-            headerUsername.innerText = localUser.username;
-            headerBalance.innerText = `${localUser.points.toLocaleString()} P`;
-
-            await syncUserData();
-            await fetchUserTickets();
-            startRankingListener();
-            updateUI();
-        }
-
-        // SYNC USER DATA (Local Storage or Firebase Firestore)
-        async function syncUserData() {
-            // Always sync localstorage first
-            localStorage.setItem('sim_user_points', localUser.points.toString());
-            localStorage.setItem('sim_user_name', localUser.username);
-
-            // Cloud Firestore sync (RULE 1 - public schema)
-            if (isFirebaseActive && db) {
-                try {
-                    const rankingDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'rankings', localUser.uid);
-                    await setDoc(rankingDocRef, {
-                        username: localUser.username,
-                        totalPoints: localUser.points + getActiveInvestedPoints(),
-                        freePoints: localUser.points,
-                        updatedAt: Date.now()
-                    }, { merge: true });
-                } catch(e) {
-                    console.error("Cloud User Sync error:", e);
-                }
-            }
-        }
-
-        function getActiveInvestedPoints() {
-            return activeTickets.reduce((sum, ticket) => sum + ticket.amount, 0);
-        }
-
-        // FETCH USER TICKETS
-        async function fetchUserTickets() {
-            if (isFirebaseActive && db) {
-                try {
-                    // RULE 1 - Private path
-                    const ticketsCol = collection(db, 'artifacts', appId, 'users', localUser.uid, 'tickets');
-                    const qDocs = await getDocs(ticketsCol);
-                    activeTickets = [];
-                    qDocs.forEach(docSnap => {
-                        activeTickets.push({
-                            id: docSnap.id,
-                            ...docSnap.data()
-                        });
-                    });
-                } catch(e) {
-                    console.error("Firestore loading tickets failed, loading offline local tickets.", e);
-                    loadLocalTickets();
-                }
-            } else {
-                loadLocalTickets();
-            }
-            renderTickets();
-        }
-
-        function loadLocalTickets() {
-            const raw = localStorage.getItem(`local_tickets_${localUser.uid}`);
-            if (raw) {
-                try {
-                    activeTickets = JSON.parse(raw);
-                } catch(e) {
-                    activeTickets = [];
-                }
-            } else {
-                activeTickets = [];
-            }
-        }
-
-        function saveLocalTickets() {
-            localStorage.setItem(`local_tickets_${localUser.uid}`, JSON.stringify(activeTickets));
-        }
-
-        // EMIT & SUBMIT NEW TICKET
+        // Submitting real Cloud Ticket
         btnSubmitBet.addEventListener('click', async () => {
-            if (!selectedBet.pick) return;
+            if (!selectedBet.pick || !currentUser) return;
             const betAmount = parseInt(betSlider.value);
 
-            if (betAmount > localUser.points) {
-                alert("가상 보유 자산(P)이 부족합니다.");
+            if (betAmount > userProfile.points) {
+                await showCustomDialog({
+                    title: "잔고 부족",
+                    message: "가상 보유 자산 포인트가 부족하여 티켓을 발급할 수 없습니다.",
+                    icon: "alert-octagon"
+                });
                 return;
             }
 
             if (betAmount < 100) {
-                alert("최소 가상 예측 금액은 100 P 입니다.");
+                await showCustomDialog({
+                    title: "최소 금액 미달",
+                    message: "최소 가상 베팅 금액은 100 P 입니다.",
+                    icon: "info"
+                });
                 return;
             }
 
+            // Create Ticket payload
             const ticketId = 'TX-' + Math.random().toString(36).substr(2, 9).toUpperCase();
             const newTicket = {
-                id: ticketId,
                 type: selectedBet.type,
                 pick: selectedBet.pick,
                 odds: selectedBet.odds,
@@ -883,244 +1057,171 @@
                 createdAt: Date.now()
             };
 
-            // Deduct points
-            localUser.points -= betAmount;
+            try {
+                // Update Local Model first to reflect immediate visual response
+                userProfile.points -= betAmount;
+                headerBalance.innerText = `${userProfile.points.toLocaleString()} P`;
 
-            // Save Ticket
-            if (isFirebaseActive && db) {
-                try {
-                    // RULE 1 - Save to user private folder
-                    const ticketRef = doc(db, 'artifacts', appId, 'users', localUser.uid, 'tickets', ticketId);
-                    await setDoc(ticketRef, newTicket);
-                } catch(e) {
-                    console.error("Cloud ticket emit failed, saving locally", e);
-                }
+                // Firestore Transact Sync (RULE 1 & RULE 3)
+                const ticketRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'tickets', ticketId);
+                await setDoc(ticketRef, newTicket);
+
+                const profileRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'main');
+                await setDoc(profileRef, {
+                    points: userProfile.points,
+                    updatedAt: Date.now()
+                }, { merge: true });
+
+                const rankingRef = doc(db, 'artifacts', appId, 'public', 'data', 'rankings', currentUser.uid);
+                await setDoc(rankingRef, {
+                    totalPoints: userProfile.points + getActiveInvestedPoints(activeTickets) + betAmount,
+                    updatedAt: Date.now()
+                }, { merge: true });
+
+                resetActiveSelection();
+                
+                await showCustomDialog({
+                    title: "티켓 발행 완료",
+                    message: "가상 베팅 영수증이 파이어스토어 데이터베이스에 영구 전송 및 실시간 보증되었습니다!",
+                    icon: "printer"
+                });
+
+            } catch (err) {
+                console.error("Ticket submit failed:", err);
+                // Rollback local model
+                userProfile.points += betAmount;
+                headerBalance.innerText = `${userProfile.points.toLocaleString()} P`;
+                
+                await showCustomDialog({
+                    title: "서버 처리 에러",
+                    message: "클라우드 통신 실패로 예측 발급을 취소했습니다. 파이어베이스 권한 설정을 점검해 보세요.",
+                    icon: "alert-triangle"
+                });
             }
-            
-            // Always keep local list updated
-            activeTickets.unshift(newTicket);
-            saveLocalTickets();
-
-            await syncUserData();
-            resetActiveSelection();
-            updateUI();
-            
-            alert("예측이 접수되어 가상 스포츠 보증 티켓이 보관함으로 발행되었습니다!");
         });
 
-        // REFUND/CANCEL TICKET
+        function getActiveInvestedPoints(tickets) {
+            return tickets.reduce((sum, ticket) => sum + ticket.amount, 0);
+        }
+
+        // Cancel / Refund Ticket controller linked to globally accessible window context
         window.refundTicket = async function(ticketId) {
             const target = activeTickets.find(t => t.id === ticketId);
-            if (!target) return;
+            if (!target || !currentUser) return;
 
-            if (confirm("경기가 가동되기 이전입니다. 해당 가상 티켓을 철회하고 배팅금을 전액 환불받으시겠습니까?")) {
-                localUser.points += target.amount;
+            const confirmResult = await showCustomDialog({
+                title: "예측 철회 안내",
+                message: "경기가 가동되기 이전입니다. 해당 가상 티켓을 정말 취소하고 예측 투자금을 100% 실시간 환불받으시겠습니까?",
+                isConfirm: true,
+                icon: "help-circle"
+            });
 
-                // Cloud delete
-                if (isFirebaseActive && db) {
-                    try {
-                        const ticketRef = doc(db, 'artifacts', appId, 'users', localUser.uid, 'tickets', ticketId);
-                        await deleteDoc(ticketRef);
-                    } catch(e) {
-                        console.error("Firestore delete error:", e);
-                    }
-                }
+            if (!confirmResult) return;
 
-                // Local update
-                activeTickets = activeTickets.filter(t => t.id !== ticketId);
-                saveLocalTickets();
+            try {
+                const refundAmount = target.amount;
+                userProfile.points += refundAmount;
+                headerBalance.innerText = `${userProfile.points.toLocaleString()} P`;
 
-                await syncUserData();
-                updateUI();
+                // Firestore Document deletions (RULE 1 & RULE 3)
+                const ticketRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'tickets', ticketId);
+                await deleteDoc(ticketRef);
+
+                const profileRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'main');
+                await setDoc(profileRef, {
+                    points: userProfile.points,
+                    updatedAt: Date.now()
+                }, { merge: true });
+
+                const rankingRef = doc(db, 'artifacts', appId, 'public', 'data', 'rankings', currentUser.uid);
+                await setDoc(rankingRef, {
+                    totalPoints: userProfile.points + getActiveInvestedPoints(activeTickets) - refundAmount,
+                    updatedAt: Date.now()
+                }, { merge: true });
+
+                await showCustomDialog({
+                    title: "철회 환불 완료",
+                    message: "가상 티켓이 영구 소멸되었으며, 베팅 포인트가 정상 복구되었습니다.",
+                    icon: "check-circle"
+                });
+
+            } catch (err) {
+                console.error("Refund failed:", err);
+                await showCustomDialog({
+                    title: "환불 처리 오류",
+                    message: "클라우드 데이터베이스 처리 도중 장애가 발생했습니다.",
+                    icon: "alert-triangle"
+                });
             }
         };
 
-        // COPY SLIP TO CLIPBOARD
-        window.copyTicketText = function(ticketId) {
+        // Copy slip text context handler
+        window.copyTicket = async function(ticketId) {
             const target = activeTickets.find(t => t.id === ticketId);
             if (!target) return;
 
-            const textToCopy = `[돈넣고 돈먹기 가상 보증서]\n티켓번호: ${target.id}\n예측마켓: ${target.pick}\n배당률: ${target.odds.toFixed(2)}배\n베팅금액: ${target.amount.toLocaleString()} P\n예상지급금액: ${Math.floor(target.amount * target.odds).toLocaleString()} P`;
-            
-            // Clipboard standard API
+            const est = Math.floor(target.amount * target.odds);
+            const text = `[돈넣고 돈먹기 가상 베팅 보증 티켓]\n번호: ${target.id}\n타겟: ${target.pick}\n배당: ${target.odds.toFixed(2)}배\n금액: ${target.amount.toLocaleString()} P\n예상수령: ${est.toLocaleString()} P`;
+
             try {
                 const textarea = document.createElement('textarea');
-                textarea.value = textToCopy;
+                textarea.value = text;
                 document.body.appendChild(textarea);
                 textarea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textarea);
-                alert("가상 베팅 증서 정보가 클립보드에 복사되었습니다! 친구들과 대화창에서 공유해 보세요.");
-            } catch(err) {
-                alert("복사 도중 에러가 발생했습니다.");
+
+                await showCustomDialog({
+                    title: "클립보드 복사",
+                    message: "베팅 증서 내용이 정상 복사되었습니다. 다른 단톡방에 붙여넣어 예측을 공유해 보세요!",
+                    icon: "clipboard"
+                });
+            } catch (err) {
+                console.error("Copy failed:", err);
             }
         };
 
-        // RENDER ACTIVE TICKETS
-        function renderTickets() {
-            ticketCountLabel.innerText = `${activeTickets.length}장`;
+        // Free 10,000P recharge controller
+        btnResetPoints.addEventListener('click', async () => {
+            const confirmResult = await showCustomDialog({
+                title: "자금 보충 충전",
+                message: "현재 소지한 가상 잔고 포인트를 즉시 10,000 P로 리필 수혈하시겠습니까? (보관 중인 영수증 티켓은 유지됩니다)",
+                isConfirm: true,
+                icon: "coins"
+            });
 
-            if (activeTickets.length === 0) {
-                slipsEmpty.classList.remove('hidden');
-                // clear tickets from render
-                const elements = slipsContainer.querySelectorAll('.dynamic-ticket');
-                elements.forEach(el => el.remove());
-                return;
+            if (!confirmResult || !currentUser) return;
+
+            try {
+                userProfile.points = 10000;
+                headerBalance.innerText = "10,000 P";
+
+                const profileRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'main');
+                await setDoc(profileRef, {
+                    points: 10000,
+                    updatedAt: Date.now()
+                }, { merge: true });
+
+                const rankingRef = doc(db, 'artifacts', appId, 'public', 'data', 'rankings', currentUser.uid);
+                await setDoc(rankingRef, {
+                    totalPoints: 10000 + getActiveInvestedPoints(activeTickets),
+                    updatedAt: Date.now()
+                }, { merge: true });
+
+                await showCustomDialog({
+                    title: "무료 충전 성공",
+                    message: "클라우드 프로필에 새로운 배팅머니 10,000 P가 정상 입금되었습니다!",
+                    icon: "check"
+                });
+                updateBettingConsoleUI();
+
+            } catch (err) {
+                console.error("Recharge failed:", err);
             }
+        });
 
-            slipsEmpty.classList.add('hidden');
-            
-            // Clear existing
-            const elements = slipsContainer.querySelectorAll('.dynamic-ticket');
-            elements.forEach(el => el.remove());
-
-            activeTickets.forEach(ticket => {
-                const el = document.createElement('div');
-                el.className = "dynamic-ticket bg-slate-950 border border-slate-800 rounded-xl p-4 relative overflow-hidden transition hover:border-slate-700 shadow-md";
-                
-                const estPayout = Math.floor(ticket.amount * ticket.odds);
-                
-                el.innerHTML = `
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-[10px] text-emerald-400 font-extrabold tracking-widest ticket-font uppercase">ACTIVE TICKET</span>
-                        <span class="text-[10px] text-slate-500 ticket-font">${ticket.id}</span>
-                    </div>
-
-                    <p class="text-sm font-extrabold text-white mb-2">${ticket.pick}</p>
-
-                    <div class="grid grid-cols-2 gap-2 text-xs border-t border-slate-900 pt-2.5 mb-3">
-                        <div>
-                            <span class="text-[10px] text-slate-500 block">가상 투자액</span>
-                            <span class="font-semibold text-slate-300 ticket-font">${ticket.amount.toLocaleString()} P</span>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-[10px] text-slate-500 block">예상 당첨금</span>
-                            <span class="font-extrabold text-emerald-400 ticket-font">${estPayout.toLocaleString()} P</span>
-                        </div>
-                    </div>
-
-                    <!-- Action control buttons -->
-                    <div class="flex items-center justify-between gap-2">
-                        <button onclick="copyTicketText('${ticket.id}')" class="flex-1 py-1 px-2.5 bg-slate-900 border border-slate-800 hover:border-slate-700 hover:bg-slate-850 transition rounded-lg text-[11px] text-slate-400 hover:text-white font-semibold flex items-center justify-center gap-1">
-                            <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
-                            영수증 복사
-                        </button>
-                        <button onclick="refundTicket('${ticket.id}')" class="py-1 px-3 bg-rose-500/10 border border-rose-500/20 hover:border-rose-500/40 hover:bg-rose-500/20 transition rounded-lg text-[11px] text-rose-400 font-semibold flex items-center justify-center gap-1">
-                            <i data-lucide="undo" class="w-3.5 h-3.5"></i>
-                            철회
-                        </button>
-                    </div>
-
-                    <!-- Decorative barcode -->
-                    <div class="mt-3 pt-2.5 border-t border-dashed border-slate-850 flex flex-col items-center justify-center opacity-40">
-                        <div class="h-6 w-full bg-[linear-gradient(90deg,#fff_2px,transparent_2px,#fff_4px,transparent_8px,#fff_10px,transparent_11px,#fff_15px,transparent_17px,#fff_21px,transparent_22px)] opacity-30"></div>
-                        <span class="text-[9px] text-slate-600 ticket-font mt-1">VERIFICATION SECURE HASH: ${Math.random().toString(36).substr(2, 6).toUpperCase()}</span>
-                    </div>
-                `;
-                slipsContainer.appendChild(el);
-            });
-
-            // Re-render icons inside injected html
-            lucide.createIcons();
-        }
-
-        // REALTIME RANKING LISTENER
-        let unsubscribeRankings = null;
-        function startRankingListener() {
-            if (isFirebaseActive && db) {
-                try {
-                    // RULE 1 - Path pattern
-                    const rankingsCol = collection(db, 'artifacts', appId, 'public', 'data', 'rankings');
-                    
-                    // RULE 2 - Fetch all, order in JS memory to avoid Firebase compound index errors
-                    unsubscribeRankings = onSnapshot(rankingsCol, (querySnapshot) => {
-                        const items = [];
-                        querySnapshot.forEach((docSnap) => {
-                            items.push(docSnap.data());
-                        });
-                        
-                        // Sort by totalPoints in-memory
-                        items.sort((a, b) => b.totalPoints - a.totalPoints);
-                        renderLeaderboard(items);
-                    }, (error) => {
-                        console.error("Firestore leaderboard failed, fallback to local simulator:", error);
-                        renderSimulatedLeaderboard();
-                    });
-                } catch(e) {
-                    console.error("Leaderboard init crash, rendering offline simulator:", e);
-                    renderSimulatedLeaderboard();
-                }
-            } else {
-                renderSimulatedLeaderboard();
-            }
-        }
-
-        // OFFLINE RANKING SYSTEM (Produces lively simulated active competitors)
-        const botCompetitors = [
-            { username: "⚽축구왕슛돌이", basePoints: 48200 },
-            { username: "🔥손흥민월클인정", basePoints: 31000 },
-            { username: "체코벌크업방패", basePoints: 21500 },
-            { username: "치킨은교촌이지", basePoints: 17800 },
-            { username: "코리아화이팅🇰🇷", basePoints: 12500 }
-        ];
-
-        function renderSimulatedLeaderboard() {
-            // Update bot values slightly to make it feel "active"
-            const userTotal = localUser.points + getActiveInvestedPoints();
-            const list = botCompetitors.map(bot => {
-                // Add minor pseudo random fluctuation based on time
-                const variation = Math.sin(Date.now() / 600000 + bot.username.length) * 800;
-                return {
-                    username: bot.username,
-                    totalPoints: Math.floor(bot.basePoints + variation)
-                };
-            });
-
-            // Add our local user
-            list.push({
-                username: `${localUser.username} (나)`,
-                totalPoints: userTotal,
-                isMe: true
-            });
-
-            // Sort
-            list.sort((a, b) => b.totalPoints - a.totalPoints);
-            renderLeaderboard(list);
-        }
-
-        function renderLeaderboard(data) {
-            leaderboardList.innerHTML = "";
-
-            data.slice(0, 10).forEach((item, index) => {
-                const el = document.createElement('div');
-                const rank = index + 1;
-                
-                let rankStyle = "bg-slate-950 text-slate-400";
-                if (rank === 1) rankStyle = "bg-amber-500/10 border border-amber-500/20 text-amber-400 font-bold";
-                else if (rank === 2) rankStyle = "bg-slate-300/10 border border-slate-300/20 text-slate-300 font-bold";
-                else if (rank === 3) rankStyle = "bg-amber-700/10 border border-amber-700/20 text-amber-600 font-bold";
-
-                const isMe = item.isMe || (item.username === localUser.username);
-
-                el.className = `p-3 rounded-xl flex items-center justify-between border transition ${isMe ? 'bg-emerald-500/10 border-emerald-500/40' : 'bg-slate-950/40 border-slate-850'}`;
-                el.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <span class="w-6 h-6 rounded-lg flex items-center justify-center text-xs ticket-font ${rankStyle}">${rank}</span>
-                        <span class="text-xs font-bold text-slate-200 ${isMe ? 'text-emerald-400' : ''}">
-                            ${item.username} ${isMe ? '<span class="text-[9px] bg-emerald-400/20 text-emerald-400 px-1.5 py-0.5 rounded-full ml-1">나</span>' : ''}
-                        </span>
-                    </div>
-                    <span class="text-xs font-black text-slate-300 ticket-font">${item.totalPoints.toLocaleString()} P</span>
-                `;
-                leaderboardList.appendChild(el);
-            });
-        }
-
-        function updateUI() {
-            headerBalance.innerText = `${localUser.points.toLocaleString()} P`;
-            updateSelectionDisplay();
-            renderTickets();
-        }
+        // Trigger bootstrap configuration
+        bootPlatform();
 
     </script>
 </body>
