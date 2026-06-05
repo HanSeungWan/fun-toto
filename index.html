@@ -96,13 +96,22 @@
                 <p class="text-xs text-slate-400 mt-2">이 앱은 100% Firebase 클라우드 연동 전용으로, 로컬 임시 보존을 지원하지 않습니다.</p>
             </div>
 
+            <!-- DYNAMIC CONNECTION ERROR BOX -->
+            <div id="setup-error-box" class="hidden bg-rose-950/40 border border-rose-900/50 p-4 rounded-xl text-xs text-rose-300 space-y-2 mb-6 font-mono break-all">
+                <p class="font-bold text-rose-450 flex items-center gap-1">
+                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                    서버 연결 실패 (원인 분석):
+                </p>
+                <p id="setup-error-msg" class="leading-relaxed"></p>
+            </div>
+
             <div class="bg-slate-950 p-4 rounded-xl border border-slate-850 text-xs text-slate-300 space-y-2 mb-6">
                 <p class="font-bold text-emerald-400 flex items-center gap-1">
                     <i data-lucide="sparkles" class="w-4 h-4"></i>
                     구축 연결 방법:
                 </p>
                 <p>1. 구글 Firebase Console에서 무료 Web 프로젝트를 개설합니다.</p>
-                <p>2. 발급된 SDK JSON 구성 정보를 아래 칸에 복사해 넣으세요.</p>
+                <p>2. 발급된 SDK JSON 혹은 자바스크립트 구성 정보 객체를 아래 칸에 복사해 넣으세요.</p>
                 <p>3. 저장 시 즉시 활성화되며, 다른 모든 사용자들과 실시간 랭킹이 영구 연동됩니다!</p>
             </div>
 
@@ -112,8 +121,8 @@
                     <input type="text" id="setup-app-id" required placeholder="예: fun-toto-application" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-white focus:border-emerald-500 focus:outline-none font-semibold">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1">Firebase SDK Config (JSON Format)</label>
-                    <textarea id="setup-json-config" required rows="6" placeholder='{ "apiKey": "AIzaSy...", "authDomain": "...", "projectId": "..." }' class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-white font-mono focus:border-emerald-500 focus:outline-none placeholder-slate-800"></textarea>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">Firebase SDK Config (자유 형식 붙여넣기)</label>
+                    <textarea id="setup-json-config" required rows="6" placeholder='const firebaseConfig = {&#10;  apiKey: "AIzaSy...",&#10;  authDomain: "...",&#10;  ...&#10;};' class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-white font-mono focus:border-emerald-500 focus:outline-none placeholder-slate-800"></textarea>
                 </div>
                 <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-sm flex items-center justify-center gap-2 transition active:scale-[0.98]">
                     <i data-lucide="save" class="w-4 h-4"></i>
@@ -293,10 +302,10 @@
 
                         <!-- Presets -->
                         <div class="grid grid-cols-4 gap-2 mb-6">
-                            <button data-action="add" data-val="1000" class="btn-preset py-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-750 text-xs text-slate-300 font-semibold transition active:bg-slate-900">+1,000</button>
-                            <button data-action="add" data-val="5000" class="btn-preset py-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-750 text-xs text-slate-300 font-semibold transition active:bg-slate-900">+5,000</button>
-                            <button data-action="pct" data-val="50" class="btn-preset py-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-750 text-xs text-slate-300 font-semibold transition active:bg-slate-900">50%</button>
-                            <button data-action="max" class="btn-preset py-2 rounded-lg bg-slate-950 border border-slate-800 hover:border-slate-750 text-xs text-slate-300 font-semibold transition active:bg-slate-900 text-emerald-400 font-bold">ALL-IN</button>
+                            <button data-action="add" data-val="1000" class="btn-preset py-2 rounded-lg bg-slate-950 border border-slate-850 hover:border-slate-750 text-xs text-slate-300 font-semibold transition active:bg-slate-900">+1,000</button>
+                            <button data-action="add" data-val="5000" class="btn-preset py-2 rounded-lg bg-slate-950 border border-slate-850 hover:border-slate-750 text-xs text-slate-300 font-semibold transition active:bg-slate-900">+5,000</button>
+                            <button data-action="pct" data-val="50" class="btn-preset py-2 rounded-lg bg-slate-950 border border-slate-850 hover:border-slate-750 text-xs text-slate-300 font-semibold transition active:bg-slate-900">50%</button>
+                            <button data-action="max" class="btn-preset py-2 rounded-lg bg-slate-950 border border-slate-850 hover:border-slate-750 text-xs text-slate-300 font-semibold transition active:bg-slate-900 text-emerald-400 font-bold">ALL-IN</button>
                         </div>
 
                         <!-- Summary Slip -->
@@ -393,15 +402,15 @@
         // 아래 괄호 내에 본인의 Firebase 정보를 작성해 두세요! 
         // =========================================================================
         const myFirebaseConfig = {
-            apiKey: "AIzaSyBiiIRKd3QOI0AGedlDxjhuUTQH4UsRTB0",
-            authDomain: "funproject-5ebfc.firebaseapp.com",
-            projectId: "funproject-5ebfc",
-            storageBucket: "funproject-5ebfc.firebasestorage.app",
-            messagingSenderId: "22039341965",
-            appId: "1:22039341965:web:13b1edbb51693086316bc4"
+  apiKey: "AIzaSyBiiIRKd3QOI0AGedlDxjhuUTQH4UsRTB0",
+  authDomain: "funproject-5ebfc.firebaseapp.com",
+  projectId: "funproject-5ebfc",
+  storageBucket: "funproject-5ebfc.firebasestorage.app",
+  messagingSenderId: "22039341965",
+  appId: "1:22039341965:web:13b1edbb51693086316bc4"
         };
-        const myAppId = "1:22039341965:web:13b1edbb51693086316bc4"; // 고유 앱식별 아이디 정의
-        const defaultAppId = "1:22039341965:web:13b1edbb51693086316bc4";
+        const myAppId = "fun-toto-2026"; // 고유 앱식별 아이디 정의
+        const defaultAppId = "fun-toto-2026";
 
         // Global States
         let isFirebaseActive = false;
@@ -480,6 +489,29 @@
         const dialogIcon = document.getElementById('dialog-icon');
 
         lucide.createIcons();
+
+        // Ultra-Smart Parser (Accepts JavaScript syntax as well as standard JSON)
+        function cleanAndParseJSON(str) {
+            str = str.trim();
+            // Remove comments
+            str = str.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '$1');
+            // Remove variable declarations like const/let/var/window.config =
+            str = str.replace(/^(const|let|var|window\.)\s*[\w_]+\s*=\s*/i, '');
+            // Remove semicolons at the end
+            str = str.replace(/;+$/, '');
+            
+            try {
+                // Try executing clean JS object code safely in a return sandbox
+                const fn = new Function(`return (${str});`);
+                const obj = fn();
+                if (obj && typeof obj === 'object') {
+                    return obj;
+                }
+            } catch (e) {
+                console.warn("Flex-eval failed, falling back to JSON.parse:", e);
+            }
+            return JSON.parse(str);
+        }
 
         // Safe Custom UI Modal
         function showCustomDialog({ title, message, isConfirm = false, icon = "info" }) {
@@ -597,6 +629,22 @@
                 console.error("Firebase Connection Error", err);
                 connectionLoader.classList.add('hidden');
                 firebaseSetupContainer.classList.remove('hidden');
+                
+                // Show rich analytics detailing the exact error
+                const setupErrorBox = document.getElementById('setup-error-box');
+                const setupErrorMsg = document.getElementById('setup-error-msg');
+                setupErrorBox.classList.remove('hidden');
+                
+                let friendlyMsg = err.message || err;
+                if (err.code === 'auth/operation-not-allowed') {
+                    friendlyMsg = "[익명 인증 미활성화] 귀하의 Firebase 프로젝트 콘솔에서 익명 로그인이 허용되어 있지 않습니다.\n✔ 해결 방법: Firebase Console -> Authentication -> Sign-in method 탭으로 이동하신 후, '익명(Anonymous)' 공급업체를 사용 설정(Enable)해 주시기 바랍니다.";
+                } else if (err.code === 'auth/invalid-api-key') {
+                    friendlyMsg = "[잘못된 API 키] 입력한 apiKey 정보가 없거나 다른 프로젝트의 구성 코드를 복사하셨습니다.";
+                } else if (err.message && err.message.includes("Could not reach Cloud Firestore")) {
+                    friendlyMsg = "[Firestore 네트워크 거부] 데이터베이스 보안 규칙(Rules)이 테스트 모드가 아니거나 외부 기기의 접근을 차단하고 있습니다.";
+                }
+                setupErrorMsg.innerText = friendlyMsg;
+                lucide.createIcons();
             }
         }
 
@@ -606,14 +654,14 @@
             const jsonVal = document.getElementById('setup-json-config').value.trim();
 
             try {
-                JSON.parse(jsonVal);
-                localStorage.setItem('sim_strict_fb_config', jsonVal);
+                const parsed = cleanAndParseJSON(jsonVal);
+                localStorage.setItem('sim_strict_fb_config', JSON.stringify(parsed));
                 localStorage.setItem('sim_strict_fb_appid', appIdVal);
                 window.location.reload();
             } catch(e) {
                 showCustomDialog({
                     title: "양식 오류",
-                    message: "올바른 JSON 포맷이 아닙니다.",
+                    message: "올바른 구성 정보가 아닙니다. 파이어베이스의 SDK 구성 코드를 그대로 복사-붙여넣기 해주세요.",
                     icon: "alert-triangle"
                 });
             }
@@ -1148,6 +1196,29 @@
                 console.error("Recharge failed:", err);
             }
         });
+
+        // Dynamic Score Odds Table Matrix
+        function calculateScoreOdds(kor, cze) {
+            if (kor === 1 && cze === 1) return 6.50;
+            if (kor === 1 && cze === 0) return 7.20;
+            if (kor === 2 && cze === 1) return 8.50;
+            if (kor === 0 && cze === 1) return 9.00;
+            if (kor === 2 && cze === 0) return 11.00;
+            if (kor === 0 && cze === 0) return 12.00;
+            if (kor === 1 && cze === 2) return 13.00;
+            if (kor === 2 && cze === 2) return 15.00;
+            if (kor === 3 && cze === 1) return 19.00;
+            if (kor === 0 && cze === 2) return 21.00;
+            if (kor === 3 && cze === 2) return 26.00;
+
+            const totalGoals = kor + cze;
+            const diff = Math.abs(kor - cze);
+            let base = 15.0;
+            base += totalGoals * 8.0;
+            base += diff * 5.0;
+            if (kor > 4 || cze > 4) base += 50.0;
+            return Math.min(150.0, parseFloat(base.toFixed(2)));
+        }
 
         bootPlatform();
 
